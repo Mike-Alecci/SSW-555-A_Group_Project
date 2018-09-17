@@ -34,7 +34,7 @@ def getIndis(file):
         level,tag,args=parseLine(line)
     
         if args=="INDI":                #if the current line starts a new individual, begin a new key in the dictionary
-            indiID=tag.replace("@",'')
+            indiID=tag.replace("@",'') 
         
             line=input_file.readline()
             level,tag,args=parseLine(line)        

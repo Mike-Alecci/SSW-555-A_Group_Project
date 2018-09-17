@@ -1,6 +1,7 @@
 from prettytable import PrettyTable
 import datetime
 from collections import defaultdict
+import os
 
 class AnalyzeGEDCOM:
     """This class analyzes the GEDCOM file and sorts information into the family and individual classes respectively for analysis"""
@@ -80,10 +81,12 @@ class AnalyzeGEDCOM:
 
     def create_pretty_tables(self):
         """Populates the pretty tables with all necessary summary information"""
+        print("Individual Table")
         for ID, ind in self.individuals.items():
             ind.update_info()                       #Assigns alive, and age
             self.indi_table.add_row([ID, ind.name, ind.sex, ind.birt, ind.age, ind.alive, ind.deat, ind.famc, ind.fams])
         print(self.indi_table)
+        print("Family Table")
         for ID, fam in self.family.items():
             self.fam_table.add_row([ID, fam.marr, fam.div, fam.husb, self.individuals[fam.husb].name, fam.wife, self.individuals[fam.wife].name, fam.chil])
         print(self.fam_table)
@@ -117,22 +120,29 @@ class Individual:
         """This captures all the relevant information for an individual, it also instantiates null values in case information is incomplete"""
         self.name = "NA"
         self.sex = "NA"
-        self.birt = "NA"
+        self.birt = None
         self.age = "NA"
         self.alive = True
-        self.deat = "NA"
+        self.deat = None
         self.famc = "NA"
         self.fams = set()
 
     def update_info(self):
         """Checks to see if INDI is dead, and finds their age"""
-        self.alive = (self.deat == "NA")
-        self.age = (datetime.datetime.today().year - self.birt.year)
+        self.alive = (self.deat == None)
+        try:
+            if(self.alive):
+                self.age = (datetime.datetime.today().year - self.birt.year)
+            else:
+                self.age = (self.deat.year - self.birt.year)
+        except TypeError:
+            raise TypeError("Improper records of birth/death")
 
 def main():
     """This method runs the program"""
-    file_name = "GEDCOM_FamilyTree.ged"
-    analyze = AnalyzeGEDCOM(file_name)
+    cwd = os.path.dirname(os.path.abspath(__file__)) #gets directory of the file
+    file_name = cwd + "\GEDCOM_FamilyTree.ged"
+    AnalyzeGEDCOM(file_name)
 
 
 if __name__ == '__main__':

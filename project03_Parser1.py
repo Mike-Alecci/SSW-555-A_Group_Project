@@ -78,7 +78,7 @@ def makeTable(indiDict,famDict):
         
         table.add_row([indiDict[key][0],key,sex,birth,"age",alive,death,"",""])
     
-    for key in famDict:
+    for key in famDict:     #loops through family dictionary and adds spouse and child information to table
         pass
             
         table.add_row([indiDict[key][0],key,sex,birth,"age",alive,death,"",""])

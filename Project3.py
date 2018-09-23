@@ -14,6 +14,7 @@ class AnalyzeGEDCOM:
         self.analyze()
         if create_tables:           #allows to easily toggle the print of the pretty table on and off
             self.create_pretty_tables()
+        CheckForErrors(self.individuals, self.family)
 
     def analyze(self):
         """This method reads in each line and determines if a new family or individual need to be made, if not then it sends the line
@@ -138,12 +139,45 @@ class Individual:
         except TypeError:
             raise TypeError("Improper records of birth/death")
 
+class CheckForErrors:
+    """This class runs through all the user stories and looks for possible errors in the GEDCOM data"""
+    def __init__(self, ind_dict, fam_dict):
+        """This just instantiates variables in this class to the dictionaries of families and individuals 
+        from the AnalyzeGEDCOM class"""
+        self.individuals = ind_dict
+        self.family = fam_dict
+        self.marr_div_before_death()
+
+    def marr_div_before_death(self):
+        """This tests to make sure that no one was married or divorced after they died"""
+        for fam in self.family.values():
+            deat_husb = self.individuals[fam.husb].deat
+            deat_wife = self.individuals[fam.wife].deat
+            marr_date, div_date = fam.marr, fam.div
+            check_husb_m, check_husb_d, check_wife_d, check_wife_m = 1, 1, 1, 1 #Let the if else statements assign these their proper values
+            if deat_husb == None and deat_wife == None:
+                break          #We do not need to analyze further if both are alive
+            elif div_date == "NA":      #We will now consider the case the two were still married when one/both spouse died
+                if deat_husb != None:
+                    check_husb_m = (deat_husb - marr_date).days
+                else:
+                    check_wife_m = (deat_wife - marr_date).days
+            elif div_date != "NA":  #We will now consider they did divorce, we still have to check marriage again here
+                if deat_husb != None:
+                    check_husb_m = (deat_husb - marr_date).days
+                    check_husb_d = (deat_husb - div_date).days
+                else:
+                    check_wife_m = (deat_wife - marr_date).days
+                    check_wife_d = (deat_wife - div_date).days
+            if check_husb_m < 0 or check_wife_m < 0 or check_husb_d < 0 or check_wife_d < 0:
+                raise ValueError ("Either {} or {} were married or divorced after they died".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name))
+
+
 def main():
     """This method runs the program"""
     cwd = os.path.dirname(os.path.abspath(__file__)) #gets directory of the file
     file_name = cwd + "\GEDCOM_FamilyTree.ged"
     AnalyzeGEDCOM(file_name)
-
 
 if __name__ == '__main__':
     main()

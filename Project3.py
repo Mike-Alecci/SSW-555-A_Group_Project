@@ -128,14 +128,17 @@ class Individual:
         self.famc = "NA"
         self.fams = set()
 
-    def update_info(self):
-        """Checks to see if INDI is dead, and finds their age"""
+    def update_age(self):
+        """Checks to see if INDI is dead, and finds their age
+            Also checks to make sure that the person's age is less than 150 years old"""
         self.alive = (self.deat == None)
         try:
             if(self.alive):
                 self.age = (datetime.datetime.today().year - self.birt.year)
             else:
                 self.age = (self.deat.year - self.birt.year)
+            if self.age > 150:
+                raise ValueError("The age calculated ({}) is over 150 years old. Please recalculate to get a realistic age".format(self.age))
         except TypeError:
             raise TypeError("Improper records of birth/death")
 

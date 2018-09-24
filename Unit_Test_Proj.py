@@ -1,5 +1,5 @@
 import unittest
-from Project3 import AnalyzeGEDCOM, Family, Individual, CheckForErrors
+from GedcomProject import AnalyzeGEDCOM, Family, Individual, CheckForErrors
 import datetime
 import os
 

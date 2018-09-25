@@ -24,12 +24,12 @@ class AnalyzeGEDCOM:
         for line in read_GEDCOM_file:                                       #Reads each line from the generator
             if line[0] == '0' and line[1] in ["HEAD", "TRLR", "NOTE"]:      #These cases provide no information we need to analyze
                 continue
-            elif line[0] == '0' and line [2] == "INDI":                     
+            elif line[0] == '0' and line [2] == "INDI":
                 current_type = 1                                            #Marker used to ensure following lines are analyzed as individual
                 indiv = line[1].replace("@", "")                            #The GEDCOM file from online has @ID@ format, this replaces it
                 self.individuals[indiv] = Individual()                      #The instance of a Individual class object is created
                 continue
-            elif line[0] == '0' and line[2] == "FAM":                       
+            elif line[0] == '0' and line[2] == "FAM":
                 current_type = 2                                            #Marker used to ensure following lines are analyzed as family
                 fam = line[1].replace("@", "")
                 self.family[fam] = Family()                                 #The instance of a Family class object is created
@@ -37,7 +37,7 @@ class AnalyzeGEDCOM:
             if current_type in [1,2]:                                       #No new Individual or Family was created, analyze line further
                 self.analyze_info(line, previous_line, indiv, fam, current_type)
             previous_line = line
-            
+
 
     def analyze_info(self, line, previous_line, idn, fam, current_type):
         """This analyzes each line's information and stores it in the appropriate place in the appropriate class"""
@@ -69,7 +69,7 @@ class AnalyzeGEDCOM:
                 arg = datetime.datetime.strptime(arg, "%d %b %Y").date()
                 if p_level == "1" and p_tag in ["BIRT", "DEAT", "MARR", "DIV"]:
                     if current_type == 1:                   #individual analysis
-                        if p_tag == "BIRT":   
+                        if p_tag == "BIRT":
                             self.individuals[idn].birt = arg
                         elif p_tag == "DEAT":
                             self.individuals[idn].deat = arg
@@ -77,14 +77,14 @@ class AnalyzeGEDCOM:
                         if p_tag == "MARR":
                             self.family[fam].marr = arg
                         elif p_tag == "DIV":
-                            self.family[fam].div = arg 
-        
+                            self.family[fam].div = arg
+
 
     def create_pretty_tables(self):
         """Populates the pretty tables with all necessary summary information"""
         print("Individual Table")
         for ID, ind in self.individuals.items():
-            ind.update_info()                       #Assigns alive, and age
+            ind.update_age()                       #Assigns alive, and age
             self.indi_table.add_row([ID, ind.name, ind.sex, ind.birt, ind.age, ind.alive, ind.deat, ind.famc, ind.fams])
         print(self.indi_table)
         print("Family Table")
@@ -145,7 +145,7 @@ class Individual:
 class CheckForErrors:
     """This class runs through all the user stories and looks for possible errors in the GEDCOM data"""
     def __init__(self, ind_dict, fam_dict):
-        """This just instantiates variables in this class to the dictionaries of families and individuals 
+        """This just instantiates variables in this class to the dictionaries of families and individuals
         from the AnalyzeGEDCOM class"""
         self.individuals = ind_dict
         self.family = fam_dict

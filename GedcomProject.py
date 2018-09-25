@@ -84,7 +84,7 @@ class AnalyzeGEDCOM:
         """Populates the pretty tables with all necessary summary information"""
         print("Individual Table")
         for ID, ind in self.individuals.items():
-            ind.update_info()                       #Assigns alive, and age
+            ind.update_age()                       #Assigns alive, and age
             self.indi_table.add_row([ID, ind.name, ind.sex, ind.birt, ind.age, ind.alive, ind.deat, ind.famc, ind.fams])
         print(self.indi_table)
         print("Family Table")
@@ -125,22 +125,19 @@ class Individual:
         self.age = "NA"
         self.alive = True
         self.deat = None
-        self.famc = "NA"
+        self.famc = None
         self.fams = set()
 
     def update_age(self):
-        """Checks to see if INDI is dead, and finds their age
-            Also checks to make sure that the person's age is less than 150 years old"""
-        self.alive = (self.deat == None)
+        """Checks to see if INDI is dead, and finds their age"""
+        self.alive = self.deat == None
         try:
-            if(self.alive):
-                self.age = (datetime.datetime.today().year - self.birt.year)
+            if self.alive:
+                self.age = datetime.datetime.today().year - self.birt.year
             else:
-                self.age = (self.deat.year - self.birt.year)
-            if self.age > 150:
-                raise ValueError("The age calculated ({}) is over 150 years old. Please recalculate to get a realistic age".format(self.age))
-        except TypeError:
-            raise TypeError("Improper records of birth/death")
+                self.age = self.deat.year - self.birt.year
+        except AttributeError:
+            raise AttributeError("Improper records of birth/death, need proper birth/death date to calculate age")
 
 class CheckForErrors:
     """This class runs through all the user stories and looks for possible errors in the GEDCOM data"""
@@ -175,6 +172,11 @@ class CheckForErrors:
             if check_husb_m < 0 or check_wife_m < 0 or check_husb_d < 0 or check_wife_d < 0:
                 raise ValueError ("Either {} or {} were married or divorced after they died".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name))
 
+    def normal_age(self):
+        """Checks to make sure that the person's age is less than 150 years old"""
+        for individual in self.individuals.values():
+            if individual.age >= 150:
+                raise ValueError("The age calculated ({}) is over 150 years old. Please recalculate to get a realistic age".format(individual.age))
 
 def main():
     """This method runs the program"""

@@ -147,6 +147,8 @@ class CheckForErrors:
         self.individuals = ind_dict
         self.family = fam_dict
         self.marr_div_before_death()
+        self.birth_before_death()
+        self.marr_before_div()
 
     def marr_div_before_death(self):
         """This tests to make sure that no one was married or divorced after they died"""
@@ -177,6 +179,18 @@ class CheckForErrors:
         for individual in self.individuals.values():
             if individual.age >= 150:
                 raise ValueError("The age calculated ({}) is over 150 years old. Please recalculate to get a realistic age".format(individual.age))
+
+    def birth_before_death(self):
+        """US03: Tests to ensure that birth occurs before the death of an individual"""
+        for person in self.individuals.values():
+            if person.deat != None and (person.deat - person.birt).days < 0:
+                raise ValueError("{}'s death can not occur before their date of birth".format(person.name))
+
+    def marr_before_div(self):
+        """US04: Tests to ensure that marriage dates come before divorce dates"""
+        for fam in self.family.values():
+            if fam.div != "NA" and (fam.div - fam.marr).days > 0:
+                raise ValueError("{} and {}'s divorce can not occur before their date of marriage".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name))
 
 def main():
     """This method runs the program"""

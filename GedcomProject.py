@@ -5,7 +5,7 @@ import os
 
 class AnalyzeGEDCOM:
     """This class analyzes the GEDCOM file and sorts information into the family and individual classes respectively for analysis"""
-    def __init__(self, file_name, create_tables = True):
+    def __init__(self, file_name, create_tables = True, print_errors = True):
         self.file_name = file_name
         self.family = dict()        #dictionary with Key = FamID Value = Family class object
         self.individuals = dict()   #dictionary with Key = IndiID Value = Individual class object
@@ -14,7 +14,7 @@ class AnalyzeGEDCOM:
         self.analyze()
         if create_tables:           #allows to easily toggle the print of the pretty table on and off
             self.create_pretty_tables()
-        CheckForErrors(self.individuals, self.family)
+        self.all_errors = CheckForErrors(self.individuals, self.family, print_errors).all_errors
 
     def analyze(self):
         """This method reads in each line and determines if a new family or individual need to be made, if not then it sends the line
@@ -141,14 +141,17 @@ class Individual:
 
 class CheckForErrors:
     """This class runs through all the user stories and looks for possible errors in the GEDCOM data"""
-    def __init__(self, ind_dict, fam_dict):
-        """This just instantiates variables in this class to the dictionaries of families and individuals
-        from the AnalyzeGEDCOM class"""
+    def __init__(self, ind_dict, fam_dict, print_errors):
+        """This instantiates variables in this class to the dictionaries of families and individuals from 
+        the AnalyzeGEDCOM class, it also calls all US methods while providing an option to print all errors"""
         self.individuals = ind_dict
         self.family = fam_dict
+        self.all_errors = list()
         self.marr_div_before_death()
         self.birth_before_death()
-        self.marr_before_div()
+        #self.marr_before_div()
+        if print_errors == True:
+            self.print_errors()
 
     def marr_div_before_death(self):
         """This tests to make sure that no one was married or divorced after they died"""
@@ -172,7 +175,7 @@ class CheckForErrors:
                     check_wife_m = (deat_wife - marr_date).days
                     check_wife_d = (deat_wife - div_date).days
             if check_husb_m < 0 or check_wife_m < 0 or check_husb_d < 0 or check_wife_d < 0:
-                raise ValueError ("Either {} or {} were married or divorced after they died".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name))
+                self.all_errors += ["Either {} or {} were married or divorced after they died".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
 
     def normal_age(self):
         """Checks to make sure that the person's age is less than 150 years old"""
@@ -191,6 +194,14 @@ class CheckForErrors:
         for fam in self.family.values():
             if fam.div != "NA" and (fam.div - fam.marr).days > 0:
                 raise ValueError("{} and {}'s divorce can not occur before their date of marriage".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name))
+
+    def print_errors(self):
+        """After all error messages have been compiled into the list of errors the program prints them all out"""
+        if len(self.all_errors) == 0:
+            print("Congratulations this GEDCOM file has no known errors!")
+        else:
+            for error in self.all_errors:
+                print(error)
 
 def main():
     """This method runs the program"""

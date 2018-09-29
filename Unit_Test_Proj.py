@@ -103,5 +103,20 @@ class ProjectTest(unittest.TestCase):
     #    """This checks to ensure the program did not catch any errors that we didn't test against"""
     #    self.assertEqual(len(self.all_errors), self.num_of_errors)
 
+    def test_birth_before_marriage(self):
+        """Tests to see if birth_before_marriage function is working properly
+            Will raise exceptions if birth is before marriage or 9
+            months after the divorce of the parents"""
+        #Tests child is born 1 month before parents are married
+        test_ind_dict = {1 : Individual()} #creates dictionary of individuals
+        test_fam_dict = {1: Family()}
+        test_ind_dict[1].name, test_ind_dict[1].famc, test_ind_dict[1].birt = "Fake Child", 1, datetime.datetime.strptime("9 MAR 2001", "%d %b %Y").date()
+        test_fam_dict[1].husb = Individual()
+        test_fam_dict[1].wife = Individual()
+        test_fam_dict[1].chil = test_ind_dict[1]
+        test_fam_dict[1].marr = datetime.datetime.strptime("9 JUN 2001", "%d %b %Y").date()
+        with self.assertRaises(ValueError): 
+            CheckForErrors(test_ind_dict, test_fam_dict).birth_before_marriage()
+
 if __name__ == '__main__':
     unittest.main(exit=False, verbosity=2)

@@ -206,7 +206,7 @@ class CheckForErrors:
 def main():
     """This method runs the program"""
     cwd = os.path.dirname(os.path.abspath(__file__)) #gets directory of the file
-    file_name = cwd + "\GEDCOM_FamilyTree.ged"
+    file_name = cwd + r"\GEDCOM_FamilyTree.ged"
     AnalyzeGEDCOM(file_name)
 
 if __name__ == '__main__':

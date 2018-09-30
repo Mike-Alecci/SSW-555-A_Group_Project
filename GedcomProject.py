@@ -148,6 +148,7 @@ class CheckForErrors:
         self.individuals = ind_dict
         self.family = fam_dict
         self.all_errors = list()
+        self.indi_birth_before_marriage()
         self.birth_before_marriage()
         self.marr_div_before_death()
         self.birth_before_death()
@@ -155,6 +156,22 @@ class CheckForErrors:
         #self.marr_before_div()
         if print_errors == True:
             self.print_errors()
+            
+    def indi_birth_before_marriage(self):
+        """US02: Tests to ensure a married individual was not born after their marriage"""
+        for fam in self.family.values():
+            birth_husb = self.individuals[fam.husb].birt
+            birth_wife = self.individuals[fam.wife].birt
+            marr_date = fam.marr
+            
+            if(birth_husb>marr_date and birth_wife>marr_date):
+                self.all_errors += ["{}'s birth can not occur before their date of marriage".format(self.individuals[fam.husb].name) 
+                             + " and " + "{}'s birth can not occur before their date of marriage".format(self.individuals[fam.wife].name)]
+        
+            elif(birth_husb>marr_date):
+                self.all_errors += ["{}'s birth can not occur before their date of marriage".format(self.individuals[fam.husb].name)]
+            elif(birth_wife>marr_date):
+                self.all_errors += ["{}'s birth can not occur before their date of marriage".format(self.individuals[fam.wife].name)]
 
     def marr_div_before_death(self):
         """This tests to make sure that no one was married or divorced after they died"""

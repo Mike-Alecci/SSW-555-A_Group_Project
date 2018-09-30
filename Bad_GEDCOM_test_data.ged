@@ -66,6 +66,42 @@
 1 BIRT
 2 DATE 1 JAN 1850
 1 FAMS @F4@
+0 @I11@ INDI
+1 NAME Bobby /Bourne/
+1 SEX M
+1 BIRT
+2 DATE 10 MAR 2000
+1 FAMS @F5@
+0 @I12@ INDI
+1 NAME Bella /Bourne/
+1 SEX F
+1 BIRT
+2 DATE 10 MAR 2001
+1 FAMS @F5@
+0 @I13@ INDI
+1 NAME Johnny /Sway/
+1 SEX M
+1 BIRT
+2 DATE 10 MAR 1998
+1 FAMS @F6@
+0 @I14@ INDI
+1 NAME Jenny /Sway/
+1 SEX F
+1 BIRT
+2 DATE 12 MAR 1990
+1 FAMS @F6@
+0 @I15@ INDI
+1 NAME Matthew /Kennedy/
+1 SEX M
+1 BIRT
+2 DATE 10 MAR 1990
+1 FAMS @F7@
+0 @I16@ INDI
+1 NAME Missy /Kennedy/
+1 SEX F
+1 BIRT
+2 DATE 10 MAR 2000
+1 FAMS @F7@
 0 NOTE Start of the Families
 0 @F1@ FAM
 1 HUSB @I1@
@@ -93,3 +129,22 @@
 1 WIFE @I10@
 1 MARR
 2 DATE 1 JAN 1967
+0 NOTE Start of families that test birth of spouses before their marriage
+0 NOTE Family that tests both spouses born after marriage
+0 @F5@ FAM
+1 HUSB @I11@
+1 WIFE @I12@
+1 MARR
+2 DATE 2 APR 1999
+0 NOTE Family that tests husband born after marriage
+0 @F6@ FAM
+1 HUSB @I13@
+1 WIFE @I14@
+1 MARR
+2 DATE 2 APR 1995
+0 NOTE Family that tests wife born after marriage
+0 @F7@ FAM
+1 HUSB @I15@
+1 WIFE @I16@
+1 MARR
+2 DATE 2 APR 1995

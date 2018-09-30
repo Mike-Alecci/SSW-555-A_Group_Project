@@ -129,7 +129,7 @@
 1 WIFE @I10@
 1 MARR
 2 DATE 1 JAN 1967
-0 NOTE Start of families that test birth of spouses before their marriage
+0 NOTE Following families (F5,F6,F7) test birth of spouses before their marriage
 0 NOTE Family that tests both spouses born after marriage
 0 @F5@ FAM
 1 HUSB @I11@

@@ -37,6 +37,8 @@ class AnalyzeGEDCOM:
             if current_type in [1,2]:                                       #No new Individual or Family was created, analyze line further
                 self.analyze_info(line, previous_line, indiv, fam, current_type)
             previous_line = line
+        for indiv in self.individuals.values():
+            indiv.update_age()
 
 
     def analyze_info(self, line, previous_line, idn, fam, current_type):
@@ -84,7 +86,6 @@ class AnalyzeGEDCOM:
         """Populates the pretty tables with all necessary summary information"""
         print("Individual Table")
         for ID, ind in self.individuals.items():
-            ind.update_age()                       #Assigns alive, and age
             self.indi_table.add_row([ID, ind.name, ind.sex, ind.birt, ind.age, ind.alive, ind.deat, ind.famc, ind.fams])
         print(self.indi_table)
         print("Family Table")
@@ -108,10 +109,10 @@ class AnalyzeGEDCOM:
 class Family:
     """This stores all the pertinent information about a family"""
     def __init__(self):
-        self.marr = "NA" #date of marriage
-        self.div = "NA" #date of divorce
-        self.husb = "NA" #husband ID
-        self.wife = "NA" #wife ID
+        self.marr = None #date of marriage
+        self.div = None #date of divorce
+        self.husb = None #husband ID
+        self.wife = None #wife ID
         self.chil = set() #set of children
 
 
@@ -119,10 +120,10 @@ class Individual:
     """This class stores all the pertinent information about an individual"""
     def __init__(self):
         """This captures all the relevant information for an individual, it also instantiates null values in case information is incomplete"""
-        self.name = "NA"
-        self.sex = "NA"
+        self.name = None
+        self.sex = None
         self.birt = None
-        self.age = "NA"
+        self.age = None
         self.alive = True
         self.deat = None
         self.famc = None
@@ -147,8 +148,10 @@ class CheckForErrors:
         self.individuals = ind_dict
         self.family = fam_dict
         self.all_errors = list()
+        self.birth_before_marriage()
         self.marr_div_before_death()
         self.birth_before_death()
+        self.normal_age()
         #self.marr_before_div()
         if print_errors == True:
             self.print_errors()
@@ -162,12 +165,12 @@ class CheckForErrors:
             check_husb_m, check_husb_d, check_wife_d, check_wife_m = 1, 1, 1, 1 #Let the if else statements assign these their proper values
             if deat_husb == None and deat_wife == None:
                 break          #We do not need to analyze further if both are alive
-            elif div_date == "NA":      #We will now consider the case the two were still married when one/both spouse died
+            elif div_date == None:      #We will now consider the case the two were still married when one/both spouse died
                 if deat_husb != None:
                     check_husb_m = (deat_husb - marr_date).days
                 else:
                     check_wife_m = (deat_wife - marr_date).days
-            elif div_date != "NA":  #We will now consider they did divorce, we still have to check marriage again here
+            elif div_date != None:  #We will now consider they did divorce, we still have to check marriage again here
                 if deat_husb != None:
                     check_husb_m = (deat_husb - marr_date).days
                     check_husb_d = (deat_husb - div_date).days
@@ -180,8 +183,24 @@ class CheckForErrors:
     def normal_age(self):
         """Checks to make sure that the person's age is less than 150 years old"""
         for individual in self.individuals.values():
+            if individual.age == None:
+                print(individual.name)
             if individual.age >= 150:
-                raise ValueError("The age calculated ({}) is over 150 years old. Please recalculate to get a realistic age".format(individual.age))
+                self.all_errors += ["{}'s age calculated ({}) is over 150 years old".format(individual.name, individual.age)]
+
+    def birth_before_marriage(self):
+        """US:08 This checks to see if someone was born before the parents were married
+            or 9 months after divorce"""
+        for individual in self.individuals.values(): 
+            birth_date = individual.birt #each individual birthday
+            if individual.famc != None:
+                marriage_date = self.family[individual.famc].marr #each family (that child is in) marraige date
+                divorce_date = self.family[individual.famc].div #divorce date of parents 
+                diff_divorce_and_birth_date = (birth_date.year - divorce_date.year) * 12 + birth_date.month - divorce_date.month
+                if (birth_date - marriage_date).days <= 0:
+                    self.all_errors += ["{} was born before their parents were married".format(individual.name)]
+                elif divorce_date != None and diff_divorce_and_birth_date > 9:
+                    self.all_errors += ["{} was born {} months after their parents were divorced".format(individual.name, diff_divorce_and_birth_date)]
 
     def birth_before_death(self):
         """US03: Tests to ensure that birth occurs before the death of an individual"""
@@ -206,7 +225,8 @@ class CheckForErrors:
 def main():
     """This method runs the program"""
     cwd = os.path.dirname(os.path.abspath(__file__)) #gets directory of the file
-    file_name = cwd + r"\GEDCOM_FamilyTree.ged"
+    #file_name = cwd + r"\GEDCOM_FamilyTree.ged"
+    file_name = cwd + r"\Bad_GEDCOM_test_data.ged"
     AnalyzeGEDCOM(file_name)
 
 if __name__ == '__main__':

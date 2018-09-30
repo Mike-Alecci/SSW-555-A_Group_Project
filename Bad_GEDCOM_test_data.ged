@@ -28,6 +28,45 @@
 1 BIRT
 2 DATE 7 FEB 1988
 1 FAMS @F2@
+0 @I5@ INDI
+1 NAME Joe /Shmoe/
+1 SEX M
+1 BIRT
+2 DATE 1 FEB 1976
+1 FAMS @F3@
+0 @I6@ INDI
+1 NAME Mary /Shmoe/
+1 SEX F
+1 BIRT
+2 DATE 3 MAR 1977
+1 FAMS @F3@
+0 @I7@ INDI
+1 NAME Jimmy /Shmoe/
+1 SEX M
+1 BIRT
+2 DATE 2 MAR 1998
+1 FAMC @F3@
+0 @I8@ INDI
+1 NAME Sammy /Shmoe/
+1 SEX F
+1 BIRT
+2 DATE 8 APR 2007
+1 FAMC @F3@
+0 @I9@ INDI
+1 NAME John /Old/
+1 SEX M
+1 BIRT
+2 DATE 8 APR 1007
+1 DEAT
+2 DATE 10 JUL 2007
+1 FAMS @F4@
+0 @I10@ INDI
+1 NAME Jackie /Old/
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 1850
+1 FAMS @F4@
+0 NOTE Start of the Families
 0 @F1@ FAM
 1 HUSB @I1@
 1 WIFE @I2@
@@ -40,3 +79,17 @@
 2 DATE 9 MAR 2007
 1 DIV
 2 DATE 10 JAN 2009
+0 NOTE Family that tests birth before marriage and after divorce
+0 @F3@ FAM
+1 HUSB @I5@
+1 WIFE @I6@
+1 MARR
+2 DATE 4 APR 1999
+1 DIV
+2 DATE 5 APR 2002
+0 NOTE Family that tests old people (greater than 150)
+0 @F4@ FAM
+1 HUSB @I9@
+1 WIFE @I10@
+1 MARR
+2 DATE 1 JAN 1967

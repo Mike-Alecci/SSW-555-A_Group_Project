@@ -26,6 +26,16 @@ class ProjectTest(unittest.TestCase):
         cwd = os.path.dirname(os.path.abspath(__file__)) #gets directory of the file
         file_name = cwd + "\Bad_GEDCOM_test_data.ged"
         self.all_errors = AnalyzeGEDCOM(file_name, False, False).all_errors #done in this method so it only happens once
+        
+    def test_dates_before_curr(self):
+        """US01: Unit Test: to ensure that all dates occur before the current date"""
+        list_of_known_errors=["The marriage of Future Trunks and Mai Trunks cannot occur after the current date.", 
+                              "The divorce of Future Trunks and Mai Trunks cannot occur after the current date.", 
+                              "The birth of Future Trunks cannot occur after the current date.",
+                              "The birth of Mai Trunks cannot occur after the current date.",
+                              "The death of Future Trunks cannot occur after the current date."]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
 
 
     def test_indi_birth_before_marriage(self):

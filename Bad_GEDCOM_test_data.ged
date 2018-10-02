@@ -126,6 +126,20 @@
 1 BIRT
 2 DATE 3 MAR 1977
 1 FAMS @F9@
+0 @I21@ INDI
+1 NAME Future Trunks
+1 SEX M
+1 BIRT
+2 DATE 10 MAR 2020
+1 DEAT
+2 DATE 15 MAR 2050
+1 FAMS @F10@
+0 @I22@ INDI
+1 NAME Mai Trunks
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 2022
+1 FAMS @F10@
 0 NOTE Start of the Families
 0 @F1@ FAM
 1 HUSB @I1@
@@ -188,3 +202,11 @@
 2 DATE 2 MAR 1990
 1 DIV
 2 DATE 2 MAR 1990
+0 NOTE US01: Marriage and divorce occur in future. Husb born and died in future. Wife died in future.
+0F10@ FAM
+1 HUSB @I21@
+1 WIFE @I22@
+1 MARR
+2 DATE 15 MAR 2045
+1 DIV
+2 DATE 3 JAN 2049

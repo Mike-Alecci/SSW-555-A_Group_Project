@@ -143,7 +143,7 @@ class Individual:
 class CheckForErrors:
     """This class runs through all the user stories and looks for possible errors in the GEDCOM data"""
     def __init__(self, ind_dict, fam_dict, print_errors):
-        """This instantiates variables in this class to the dictionaries of families and individuals from 
+        """This instantiates variables in this class to the dictionaries of families and individuals from
         the AnalyzeGEDCOM class, it also calls all US methods while providing an option to print all errors"""
         self.individuals = ind_dict
         self.family = fam_dict
@@ -153,21 +153,21 @@ class CheckForErrors:
         self.marr_div_before_death()
         self.birth_before_death()
         self.normal_age()
-        #self.marr_before_div()
+        self.marr_before_div()
         if print_errors == True:
             self.print_errors()
-            
+
     def indi_birth_before_marriage(self):
         """US02: Tests to ensure a married individual was not born after their marriage"""
         for fam in self.family.values():
             birth_husb = self.individuals[fam.husb].birt
             birth_wife = self.individuals[fam.wife].birt
             marr_date = fam.marr
-            
+
             if(birth_husb>marr_date and birth_wife>marr_date):
-                self.all_errors += ["{}'s birth can not occur before their date of marriage".format(self.individuals[fam.husb].name) 
+                self.all_errors += ["{}'s birth can not occur before their date of marriage".format(self.individuals[fam.husb].name)
                              + " and " + "{}'s birth can not occur before their date of marriage".format(self.individuals[fam.wife].name)]
-        
+
             elif(birth_husb>marr_date):
                 self.all_errors += ["{}'s birth can not occur before their date of marriage".format(self.individuals[fam.husb].name)]
             elif(birth_wife>marr_date):
@@ -208,11 +208,11 @@ class CheckForErrors:
     def birth_before_marriage(self):
         """US:08 This checks to see if someone was born before the parents were married
             or 9 months after divorce"""
-        for individual in self.individuals.values(): 
+        for individual in self.individuals.values():
             birth_date = individual.birt #each individual birthday
             if individual.famc != None:
                 marriage_date = self.family[individual.famc].marr #each family (that child is in) marraige date
-                divorce_date = self.family[individual.famc].div #divorce date of parents 
+                divorce_date = self.family[individual.famc].div #divorce date of parents
                 diff_divorce_and_birth_date = (birth_date.year - divorce_date.year) * 12 + birth_date.month - divorce_date.month
                 if (birth_date - marriage_date).days <= 0:
                     self.all_errors += ["{} was born before their parents were married".format(individual.name)]
@@ -228,8 +228,8 @@ class CheckForErrors:
     def marr_before_div(self):
         """US04: Tests to ensure that marriage dates come before divorce dates"""
         for fam in self.family.values():
-            if fam.div != "NA" and (fam.div - fam.marr).days > 0:
-                raise ValueError("{} and {}'s divorce can not occur before their date of marriage".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name))
+            if fam.div != None and (fam.div - fam.marr).days < 0:
+                self.all_errors += ["{} and {}'s divorce can not occur before their date of marriage".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
 
     def print_errors(self):
         """After all error messages have been compiled into the list of errors the program prints them all out"""

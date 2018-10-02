@@ -102,6 +102,30 @@
 1 BIRT
 2 DATE 10 MAR 2000
 1 FAMS @F7@
+0 @I17@ INDI
+1 NAME Johnson /Deere/
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 1990
+1 FAMS @F8@
+0 @I18@ INDI
+1 NAME Emily /Deere/
+1 SEX F
+1 BIRT
+2 DATE 3 FEB 1991
+1 FAMS @F8@
+0 @I19@ INDI
+1 NAME Rick /James/
+1 SEX M
+1 BIRT
+2 DATE 5 MAR 1978
+1 FAMS @F9@
+0 @I20@ INDI
+1 NAME Linda /James/
+1 SEX F
+1 BIRT
+2 DATE 3 MAR 1977
+1 FAMS @F9@
 0 NOTE Start of the Families
 0 @F1@ FAM
 1 HUSB @I1@
@@ -148,3 +172,19 @@
 1 WIFE @I16@
 1 MARR
 2 DATE 2 APR 1995
+0 NOTE US04: Family that tests Marriage after Divorce
+0 @F8@ FAM
+1 HUSB @I17@
+1 WIFE @I18@
+1 MARR
+2 DATE 1 FEB 2001
+1 DIV
+2 DATE 1 FEB 2000
+0 NOTE US04: Family divorces same day as marriage
+0 @F9@ FAM
+1 HUSB @I17@
+1 WIFE @I18@
+1 MARR
+2 DATE 2 MAR 1990
+1 DIV
+2 DATE 2 MAR 1990

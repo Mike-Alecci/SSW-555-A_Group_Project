@@ -148,6 +148,7 @@ class CheckForErrors:
         self.individuals = ind_dict
         self.family = fam_dict
         self.all_errors = list()
+        self.dates_before_curr()
         self.indi_birth_before_marriage()
         self.birth_before_marriage()
         self.marr_div_before_death()
@@ -156,6 +157,24 @@ class CheckForErrors:
         self.marr_before_div()
         if print_errors == True:
             self.print_errors()
+            
+    def dates_before_curr(self):
+        """US01: Tests to ensure any dates do not occur after current date"""
+        for fam in self.family.values():
+            marrDate=fam.marr
+            divDate=fam.div
+            if(marrDate>datetime.datetime.now().date()):
+                self.all_errors+=["The marriage of {} and {} cannot occur after the current date.".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
+            if(divDate != None and divDate>datetime.datetime.now().date()):
+                self.all_errors+=["The divorce of {} and {} cannot occur after the current date.".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
+                
+        for indi in self.individuals.values():
+            birthday=indi.birt
+            deathDay=indi.deat
+            if(birthday>datetime.datetime.now().date()):
+                self.all_errors+=["The birth of {} cannot occur after the current date.".format(indi.name)]
+            if(deathDay != None and deathDay>datetime.datetime.now().date()):
+                self.all_errors+=["The death of {} cannot occur after the current date.".format(indi.name)]
 
     def indi_birth_before_marriage(self):
         """US02: Tests to ensure a married individual was not born after their marriage"""

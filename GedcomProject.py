@@ -155,6 +155,8 @@ class CheckForErrors:
         self.birth_before_death()
         self.normal_age()
         self.marr_before_div()
+        self.no_bigamy()
+        self.parents_too_old()
         if print_errors == True:
             self.print_errors()
             
@@ -232,7 +234,8 @@ class CheckForErrors:
             if individual.famc != None:
                 marriage_date = self.family[individual.famc].marr #each family (that child is in) marraige date
                 divorce_date = self.family[individual.famc].div #divorce date of parents
-                diff_divorce_and_birth_date = (birth_date.year - divorce_date.year) * 12 + birth_date.month - divorce_date.month
+                if divorce_date != None:
+                    diff_divorce_and_birth_date = (birth_date.year - divorce_date.year) * 12 + birth_date.month - divorce_date.month
                 if (birth_date - marriage_date).days <= 0:
                     self.all_errors += ["{} was born before their parents were married".format(individual.name)]
                 elif divorce_date != None and diff_divorce_and_birth_date > 9:
@@ -249,6 +252,62 @@ class CheckForErrors:
         for fam in self.family.values():
             if fam.div != None and (fam.div - fam.marr).days < 0:
                 self.all_errors += ["{} and {}'s divorce can not occur before their date of marriage".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
+
+    def no_bigamy(self):
+        """US11: Tests to ensure marriage does not occur during marriage with someone else"""
+        for fam in self.family.values():
+            if len(self.individuals[fam.husb].fams) <= 1 and len(self.individuals[fam.husb].fams):
+                continue           #If they are only a spouse in one family no need to continue, same for not being a spouse
+            if len(self.individuals[fam.husb].fams) > 1:      #checks if husb is a bigamist
+                count = 0
+                for spouse in sorted(self.individuals[fam.husb].fams):   #want to ensure the set is ordered
+                    curr_marr_date = self.family[spouse].marr
+                    curr_div_date = self.family[spouse].div
+                    if count == 0:
+                        prev_marr_date = self.family[spouse].marr
+                        prev_div_date = self.family[spouse].div
+                        count += 1
+                        continue
+                    if prev_div_date == None:
+                        self.add_errors_if_new("{} is practing bigamy".format(self.individuals[fam.husb].name)) 
+                    elif (curr_marr_date - prev_marr_date).days > 0 and (curr_marr_date - prev_div_date).days < 0:
+                        self.add_errors_if_new("{} is practing bigamy".format(self.individuals[fam.husb].name))
+                    prev_marr_date = self.family[spouse].marr
+                    prev_div_date = self.family[spouse].div
+            if len(self.individuals[fam.wife].fams) > 1:       #checks if wife is a bigamist 
+                count = 0
+                for spouse in sorted(self.individuals[fam.wife].fams):
+                    curr_marr_date = self.family[spouse].marr
+                    curr_div_date = self.family[spouse].div
+                    if count == 0:
+                        prev_marr_date = self.family[spouse].marr
+                        prev_div_date = self.family[spouse].div
+                        count += 1
+                        continue
+                    if prev_div_date == None:
+                        self.add_errors_if_new("{} is practing bigamy".format(self.individuals[fam.wife].name))
+                    elif (curr_marr_date - prev_marr_date).days > 0 and (curr_marr_date - prev_div_date).days < 0:
+                        self.add_errors_if_new("{} is practing bigamy".format(self.individuals[fam.wife].name))
+                    prev_marr_date = self.family[spouse].marr
+                    prev_div_date = self.family[spouse].div
+
+    def add_errors_if_new(self, error):
+        """This method is here to add errors to the error list if they do not occur, in order to ensure no duplicates.
+            Some user stories may flag duplicate errors and this method eliminates the issue."""
+        if error not in self.all_errors:
+            self.all_errors += [error]
+
+    def parents_too_old(self):
+        """This method tests to ensure that parents in a family are not too old. 
+        Mother should be less than 60 years older than children.
+        Father should be less than 80 years older than children."""
+        for indi in self.individuals.values():
+            if indi.famc == None:                   #No need to continue if they are not a child
+                continue
+            if self.individuals[self.family[indi.famc].husb].age > (indi.age + 80): #check the father
+                self.all_errors += ["{} is over 80 years older than his child {}".format(self.individuals[self.family[indi.famc].husb].name, indi.name)]
+            if self.individuals[self.family[indi.famc].wife].age > (indi.age + 60): #check the mother
+                self.all_errors += ["{} is over 60 years older than his child {}".format(self.individuals[self.family[indi.famc].wife].name, indi.name)]
 
     def print_errors(self):
         """After all error messages have been compiled into the list of errors the program prints them all out"""

@@ -37,7 +37,6 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
-
     def test_indi_birth_before_marriage(self):
         """US02: Unit Test: to ensure that birth of an individual occurs before their marriage"""
         list_of_known_errors = ["Johnny /Sway/'s birth can not occur before their date of marriage",
@@ -93,8 +92,7 @@ class ProjectTest(unittest.TestCase):
 
     def test_marr_before_div(self):
         """US04: Unit Test: to ensure that marriage dates come before divorce dates"""
-        list_of_known_errors = [
-            "Johnson /Deere/ and Emily /Deere/'s divorce can not occur before their date of marriage"]
+        list_of_known_errors = ["Johnson /Deere/ and Emily /Deere/'s divorce can not occur before their date of marriage"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
@@ -111,6 +109,20 @@ class ProjectTest(unittest.TestCase):
             "Jimmy /Shmoe/ was born before their parents were married",
             "Sammy /Shmoe/ was born 60 months after their parents were divorced"]
         #self.num_of_errors += len(list_of_known_errors)
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_no_bigamy(self):
+        """US11: Tests to see if no_bigamy function is working properly, catches all bigamists"""
+        list_of_known_errors = ["Matt /Smith/ is practing bigamy", "Jen /Smith/ is practing bigamy"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_parents_too_old(self):
+        """US12: Tests that parents are not too old relative to their children, 
+        Dad less than 80 years older and moter less than 60 years older"""
+        list_of_known_errors = ["John /Old/ is over 80 years older than his child Jessica /Old/", 
+                                "Jackie /Old/ is over 60 years older than his child Jessica /Old/"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 

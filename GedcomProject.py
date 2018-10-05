@@ -313,7 +313,6 @@ class CheckForErrors:
     def too_many_siblings(self):
         """US15: Tests to ensure that there are fewer than 15 siblings in a family"""
         for fam in self.family.values():
-            print(fam.chil)
             if len(fam.chil)>=15:
                 self.all_errors+=["The {} family has 15 or more siblings".format(self.individuals[fam.husb].fams)]
 

@@ -157,6 +157,7 @@ class CheckForErrors:
         self.marr_before_div()
         self.no_bigamy()
         self.parents_too_old()
+        self.too_many_siblings()
         if print_errors == True:
             self.print_errors()
             
@@ -308,6 +309,13 @@ class CheckForErrors:
                 self.all_errors += ["{} is over 80 years older than his child {}".format(self.individuals[self.family[indi.famc].husb].name, indi.name)]
             if self.individuals[self.family[indi.famc].wife].age > (indi.age + 60): #check the mother
                 self.all_errors += ["{} is over 60 years older than his child {}".format(self.individuals[self.family[indi.famc].wife].name, indi.name)]
+                
+    def too_many_siblings(self):
+        """US15: Tests to ensure that there are fewer than 15 siblings in a family"""
+        for fam in self.family.values():
+            print(fam.chil)
+            if len(fam.chil)>=15:
+                self.all_errors+=["The {} family has 15 or more siblings".format(self.individuals[fam.husb].fams)]
 
     def print_errors(self):
         """After all error messages have been compiled into the list of errors the program prints them all out"""

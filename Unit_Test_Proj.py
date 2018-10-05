@@ -125,6 +125,12 @@ class ProjectTest(unittest.TestCase):
                                 "Jackie /Old/ is over 60 years older than his child Jessica /Old/"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
+    
+    def test_too_many_siblings(self):
+        """US15: Test: Makes sure too_many_siblings function works properly"""
+        list_of_known_errors = ["The {'F14'} family has 15 or more siblings"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
 
 if __name__ == '__main__':
     unittest.main(exit=False, verbosity=2)

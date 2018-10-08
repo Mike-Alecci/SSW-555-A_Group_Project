@@ -148,6 +148,7 @@ class CheckForErrors:
         self.individuals = ind_dict
         self.family = fam_dict
         self.all_errors = list()
+        self.brith_before_death_of_parents()
         self.dates_before_curr()
         self.indi_birth_before_marriage()
         self.birth_before_marriage()
@@ -220,7 +221,7 @@ class CheckForErrors:
                 self.all_errors += ["Either {} or {} were married or divorced after they died".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
 
     def normal_age(self):
-        """Checks to make sure that the person's age is less than 150 years old"""
+        """US07: Checks to make sure that the person's age is less than 150 years old"""
         for individual in self.individuals.values():
             if individual.age == None:
                 print(individual.name)
@@ -239,9 +240,27 @@ class CheckForErrors:
                     diff_divorce_and_birth_date = (birth_date.year - divorce_date.year) * 12 + birth_date.month - divorce_date.month
                 if (birth_date - marriage_date).days <= 0:
                     self.all_errors += ["{} was born before their parents were married".format(individual.name)]
-                elif divorce_date != None and diff_divorce_and_birth_date > 9:
+                elif divorce_date != None and diff_divorce_and_birth_date >= 9:
                     self.all_errors += ["{} was born {} months after their parents were divorced".format(individual.name, diff_divorce_and_birth_date)]
-
+    
+    def brith_before_death_of_parents(self):
+        "US09: Checks to see if someone was born before their parent died"
+        for individual in self.individuals.values():
+            birth_date = individual.birt #each individual birthday
+            if individual.famc != None:
+                fatherID = self.family[individual.famc].husb #father ID
+                motherID = self.family[individual.famc].wife #mother ID
+                father_death = self.individuals[fatherID].deat
+                mother_death = self.individuals[motherID].deat
+                if father_death != None:
+                    father_difference = (birth_date.year - father_death.year) * 12 + birth_date.month - father_death.month
+                    if father_difference >= 9:
+                        self.all_errors += ["{} was born {} months after father died".format(individual.name, father_difference)]
+                if mother_death != None:
+                    mother_difference = (birth_date - mother_death).days
+                    if mother_difference >= 0:
+                        self.all_errors += ["{} was born after mother died".format(individual.name)]
+                 
     def birth_before_death(self):
         """US03: Tests to ensure that birth occurs before the death of an individual"""
         for person in self.individuals.values():

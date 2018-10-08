@@ -60,6 +60,16 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
+    def test_birth_before_death_of_parents(self):
+        """US09: Test if someone was born before their parent died"""
+        list_of_known_errors = [
+            "Jimmy James was born 10 months after father died",
+            "Jacob James was born 61 months after father died",
+            "Jacob James was born after mother died",
+            "Jackie James was born 12 months after father died"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
     def test_birth_before_death(self):
         """US03: Unit Test: to ensure that birth occurs before the death of an individual"""
         test_ind_dict = {}

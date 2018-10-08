@@ -63,10 +63,10 @@ class ProjectTest(unittest.TestCase):
     def test_birth_before_death_of_parents(self):
         """US09: Test if someone was born before their parent died"""
         list_of_known_errors = [
-            "Jimmy James was born 10 months after father died",
-            "Jacob James was born 61 months after father died",
-            "Jacob James was born after mother died",
-            "Jackie James was born 12 months after father died"]
+            "Jimmy /James/ was born 10 months after father died",
+            "Jacob /James/ was born 61 months after father died",
+            "Jacob /James/ was born after mother died",
+            "Jackie /James/ was born 12 months after father died"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
@@ -135,6 +135,17 @@ class ProjectTest(unittest.TestCase):
                                 "Jackie /Old/ is over 60 years older than his child Jessica /Old/"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
+    
+    def test_spouses_too_young(self):
+        """US10: Tests that the parents do not get married to each other when they are
+        younger than 14 years old"""
+        list_of_known_errors = [
+            "Bobby /Bourne/ was only -1 years old when they got married",
+            "Ann /Joene/ was only 13 years old when they got married",
+            "Nick /Jackson/ was only 9 years old when they got married"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+    
     
     def test_too_many_siblings(self):
         """US15: Test: Makes sure too_many_siblings function works properly"""

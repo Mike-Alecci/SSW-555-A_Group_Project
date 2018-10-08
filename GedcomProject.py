@@ -159,6 +159,7 @@ class CheckForErrors:
         self.no_bigamy()
         self.parents_too_old()
         self.too_many_siblings()
+        self.spouses_too_young()
         if print_errors == True:
             self.print_errors()
             
@@ -329,6 +330,17 @@ class CheckForErrors:
             if self.individuals[self.family[indi.famc].wife].age > (indi.age + 60): #check the mother
                 self.all_errors += ["{} is over 60 years older than his child {}".format(self.individuals[self.family[indi.famc].wife].name, indi.name)]
                 
+    def spouses_too_young(self):
+        """Checks to make sure that each spouse of a family is older than 14 years old when
+        they get married"""
+        for individual in self.individuals.values():
+            if len(individual.fams) > 0:
+                for family in individual.fams:
+                    marriage_date = self.family[family].marr
+                    marriage_difference = marriage_date.year - individual.birt.year
+                    if marriage_difference <= 14:
+                        self.all_errors += ["{} was only {} years old when they got married".format(individual.name, marriage_difference)]
+    
     def too_many_siblings(self):
         """US15: Tests to ensure that there are fewer than 15 siblings in a family"""
         for fam in self.family.values():

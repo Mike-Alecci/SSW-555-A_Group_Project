@@ -29,20 +29,20 @@ class ProjectTest(unittest.TestCase):
         
     def test_dates_before_curr(self):
         """US01: Unit Test: to ensure that all dates occur before the current date"""
-        list_of_known_errors=["The marriage of Future Trunks and Mai Trunks cannot occur after the current date.", 
-                              "The divorce of Future Trunks and Mai Trunks cannot occur after the current date.", 
-                              "The birth of Future Trunks cannot occur after the current date.",
-                              "The birth of Mai Trunks cannot occur after the current date.",
-                              "The death of Future Trunks cannot occur after the current date."]
+        list_of_known_errors=["US01: The marriage of Future Trunks and Mai Trunks cannot occur after the current date.", 
+                              "US01: The divorce of Future Trunks and Mai Trunks cannot occur after the current date.", 
+                              "US01: The birth of Future Trunks cannot occur after the current date.",
+                              "US01: The birth of Mai Trunks cannot occur after the current date.",
+                              "US01: The death of Future Trunks cannot occur after the current date."]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
 
     def test_indi_birth_before_marriage(self):
         """US02: Unit Test: to ensure that birth of an individual occurs before their marriage"""
-        list_of_known_errors = ["Johnny /Sway/'s birth can not occur before their date of marriage",
-                                "Missy /Kennedy/'s birth can not occur before their date of marriage",
-                                "Bobby /Bourne/'s birth can not occur before their date of marriage and Bella /Bourne/'s birth can not occur before their date of marriage" ]
+        list_of_known_errors = ["US02: Johnny /Sway/'s birth can not occur after their date of marriage",
+                                "US02: Missy /Kennedy/'s birth can not occur after their date of marriage",
+                                "US02: Bobby /Bourne/'s birth can not occur after their date of marriage and Bella /Bourne/'s birth can not occur before their date of marriage" ]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 

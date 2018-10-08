@@ -164,17 +164,17 @@ class CheckForErrors:
             marrDate=fam.marr
             divDate=fam.div
             if(marrDate>datetime.datetime.now().date()):
-                self.all_errors+=["The marriage of {} and {} cannot occur after the current date.".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
+                self.all_errors+=["US01: The marriage of {} and {} cannot occur after the current date.".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
             if(divDate != None and divDate>datetime.datetime.now().date()):
-                self.all_errors+=["The divorce of {} and {} cannot occur after the current date.".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
+                self.all_errors+=["US01: The divorce of {} and {} cannot occur after the current date.".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
                 
         for indi in self.individuals.values():
             birthday=indi.birt
             deathDay=indi.deat
             if(birthday>datetime.datetime.now().date()):
-                self.all_errors+=["The birth of {} cannot occur after the current date.".format(indi.name)]
+                self.all_errors+=["US01: The birth of {} cannot occur after the current date.".format(indi.name)]
             if(deathDay != None and deathDay>datetime.datetime.now().date()):
-                self.all_errors+=["The death of {} cannot occur after the current date.".format(indi.name)]
+                self.all_errors+=["US01: The death of {} cannot occur after the current date.".format(indi.name)]
 
     def indi_birth_before_marriage(self):
         """US02: Tests to ensure a married individual was not born after their marriage"""
@@ -184,13 +184,13 @@ class CheckForErrors:
             marr_date = fam.marr
 
             if(birth_husb>marr_date and birth_wife>marr_date):
-                self.all_errors += ["{}'s birth can not occur before their date of marriage".format(self.individuals[fam.husb].name)
-                             + " and " + "{}'s birth can not occur before their date of marriage".format(self.individuals[fam.wife].name)]
+                self.all_errors += ["US02: {}'s birth can not occur after their date of marriage".format(self.individuals[fam.husb].name)
+                             + " and " + "{}'s birth can not occur after their date of marriage".format(self.individuals[fam.wife].name)]
 
             elif(birth_husb>marr_date):
-                self.all_errors += ["{}'s birth can not occur before their date of marriage".format(self.individuals[fam.husb].name)]
+                self.all_errors += ["US02: {}'s birth can not occur after their date of marriage".format(self.individuals[fam.husb].name)]
             elif(birth_wife>marr_date):
-                self.all_errors += ["{}'s birth can not occur before their date of marriage".format(self.individuals[fam.wife].name)]
+                self.all_errors += ["US02: {}'s birth can not occur after their date of marriage".format(self.individuals[fam.wife].name)]
 
     def marr_div_before_death(self):
         """This tests to make sure that no one was married or divorced after they died"""

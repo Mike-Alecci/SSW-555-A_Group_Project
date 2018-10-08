@@ -42,7 +42,7 @@ class ProjectTest(unittest.TestCase):
         """US02: Unit Test: to ensure that birth of an individual occurs before their marriage"""
         list_of_known_errors = ["US02: Johnny /Sway/'s birth can not occur after their date of marriage",
                                 "US02: Missy /Kennedy/'s birth can not occur after their date of marriage",
-                                "US02: Bobby /Bourne/'s birth can not occur after their date of marriage and Bella /Bourne/'s birth can not occur before their date of marriage" ]
+                                "US02: Bobby /Bourne/'s birth can not occur after their date of marriage and Bella /Bourne/'s birth can not occur after their date of marriage" ]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 

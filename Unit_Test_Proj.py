@@ -37,7 +37,6 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
-
     def test_indi_birth_before_marriage(self):
         """US02: Unit Test: to ensure that birth of an individual occurs before their marriage"""
         list_of_known_errors = ["US02: Johnny /Sway/'s birth can not occur after their date of marriage",
@@ -48,33 +47,10 @@ class ProjectTest(unittest.TestCase):
 
     def test_birth_before_death(self):
         """US03: Unit Test: to ensure that birth occurs before the death of an individual"""
-        test_ind_dict = {}
-        # Test 1: Date of death is after date of birth, NO ERROR
-        test_ind_dict[1] = gen_individual(self, "Fake Person", "M", "26 FEB 1998", "26 FEB 1999")
-        try:
-            CheckForErrors(test_ind_dict, {}, False).birth_before_death()
-        except ValueError:
-            self.fail("test_birth_before_death() failed!")
-        # Test 2: Date of death is before date of birth, ERROR
-        test_ind_dict[1] = gen_individual(self, "Fake Person", "M", "26 FEB 1999", "26 FEB 1998")
-        with self.assertRaises(ValueError):
-            CheckForErrors(test_ind_dict, {}, False).birth_before_death()
-        # Test 3: Date of death is same day as birth, NO ERROR
-        test_ind_dict[1] = gen_individual(self, "Fake Person", "M", "26 FEB 1998", "26 FEB 1998")
-        try:
-            CheckForErrors(test_ind_dict, {}, False).birth_before_death()
-        except ValueError:
-            self.fail("test_birth_before_death() failed!")
-        # Test 4: Date of death is 1 day after birth, NO ERROR
-        test_ind_dict[1] = gen_individual(self, "Fake Person", "M", "26 FEB 1998", "27 FEB 1998")
-        try:
-            CheckForErrors(test_ind_dict, {}, False).birth_before_death()
-        except ValueError:
-            self.fail("test_birth_before_death() failed!")
-        # Test 5: Date of death is 1 day before birth, ERROR
-        test_ind_dict[1] = gen_individual(self, "Fake Person", "M", "27 FEB 1998", "26 FEB 1998")
-        with self.assertRaises(ValueError):
-            CheckForErrors(test_ind_dict, {}, False).birth_before_death()
+        list_of_known_errors = ["US03: James /Nicholas/'s death can not occur before their date of birth",
+                                "US03: Peter /Tosh/'s death can not occur before their date of birth"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
 
     def test_marr_before_div(self):
         """US04: Unit Test: to ensure that marriage dates come before divorce dates"""

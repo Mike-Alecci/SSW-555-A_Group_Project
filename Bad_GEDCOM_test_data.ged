@@ -140,6 +140,30 @@
 1 BIRT
 2 DATE 1 JAN 2022
 1 FAMS @F10@
+0 NOTE US03: the following individual has a birthday 1 day after date of death
+0 @I23@ INDI
+1 NAME James /Nicholas/
+1 SEX M
+1 BIRT
+2 DATE 27 FEB 1998
+1 DEAT
+2 DATE 26 FEB 1998
+0 NOTE US03: the following individual has a birthday 5 years after date of death
+0 @I24@ INDI
+1 NAME Peter /Tosh/
+1 SEX M
+1 BIRT
+2 DATE 15 MAR 2005
+1 DEAT
+2 DATE 15 MAR 2000
+0 NOTE US03: the following individual died the same day he was born, no error
+0 @I25@ INDI
+1 NAME Stevie /Wonder/
+1 SEX M
+1 BIRT
+2 DATE 10 FEB 2002
+1 DEAT
+2 DATE 10 FEB 2002
 0 NOTE Start of the Families
 0 @F1@ FAM
 1 HUSB @I1@
@@ -194,7 +218,7 @@
 2 DATE 1 FEB 2001
 1 DIV
 2 DATE 1 FEB 2000
-0 NOTE US04: Family divorces same day as marriage
+0 NOTE US04: Family divorces same day as marriage, no errors
 0 @F9@ FAM
 1 HUSB @I17@
 1 WIFE @I18@

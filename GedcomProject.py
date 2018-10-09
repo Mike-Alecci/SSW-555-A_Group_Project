@@ -196,7 +196,7 @@ class CheckForErrors:
         """US03: Tests to ensure that birth occurs before the death of an individual"""
         for person in self.individuals.values():
             if person.deat != None and (person.deat - person.birt).days < 0:
-                raise ValueError("US03: {}'s death can not occur before their date of birth".format(person.name))
+                self.all_errors += ["US03: {}'s death can not occur before their date of birth".format(person.name)]
 
     def marr_before_div(self):
         """US04: Tests to ensure that marriage dates come before divorce dates"""

@@ -56,8 +56,8 @@ class ProjectTest(unittest.TestCase):
     def test_normal_age(self):
         """US07: Tests that the normal_age method works properly"""
         list_of_known_errors = [
-            "John /Old/'s age calculated (1000) is over 150 years old",
-            "Jackie /Old/'s age calculated (168) is over 150 years old"]
+            "US07: John /Old/'s age calculated (1000) is over 150 years old",
+            "US07: Jackie /Old/'s age calculated (168) is over 150 years old"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
@@ -108,9 +108,8 @@ class ProjectTest(unittest.TestCase):
             months after the divorce of the parents"""
         #Tests child is born 1 month before parents are married
         list_of_known_errors = [
-            "Jimmy /Shmoe/ was born before their parents were married",
-            "Sammy /Shmoe/ was born 60 months after their parents were divorced"]
-        #self.num_of_errors += len(list_of_known_errors)
+            "US08: Jimmy /Shmoe/ was born before their parents were married",
+            "US08: Sammy /Shmoe/ was born 60 months after their parents were divorced"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 

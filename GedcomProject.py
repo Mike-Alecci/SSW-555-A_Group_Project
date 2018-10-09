@@ -217,12 +217,10 @@ class CheckForErrors:
                 self.all_errors += ["Either {} or {} were married or divorced after they died".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
 
     def normal_age(self):
-        """Checks to make sure that the person's age is less than 150 years old"""
+        """US07: Checks to make sure that the person's age is less than 150 years old"""
         for individual in self.individuals.values():
-            if individual.age == None:
-                print(individual.name)
             if individual.age >= 150:
-                self.all_errors += ["{}'s age calculated ({}) is over 150 years old".format(individual.name, individual.age)]
+                self.all_errors += ["US07: {}'s age calculated ({}) is over 150 years old".format(individual.name, individual.age)]
 
     def birth_before_marriage(self):
         """US:08 This checks to see if someone was born before the parents were married
@@ -234,9 +232,9 @@ class CheckForErrors:
                 divorce_date = self.family[individual.famc].div #divorce date of parents
                 diff_divorce_and_birth_date = (birth_date.year - divorce_date.year) * 12 + birth_date.month - divorce_date.month
                 if (birth_date - marriage_date).days <= 0:
-                    self.all_errors += ["{} was born before their parents were married".format(individual.name)]
+                    self.all_errors += ["US08: {} was born before their parents were married".format(individual.name)]
                 elif divorce_date != None and diff_divorce_and_birth_date > 9:
-                    self.all_errors += ["{} was born {} months after their parents were divorced".format(individual.name, diff_divorce_and_birth_date)]
+                    self.all_errors += ["US08: {} was born {} months after their parents were divorced".format(individual.name, diff_divorce_and_birth_date)]
 
     def birth_before_death(self):
         """US03: Tests to ensure that birth occurs before the death of an individual"""

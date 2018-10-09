@@ -3,21 +3,6 @@ from GedcomProject import AnalyzeGEDCOM, Family, Individual, CheckForErrors
 import datetime
 import os
 
-def gen_individual(self, name, sex, birt, deat):
-    """Generates an Individual object and returns it.
-    Parameters: name, sex, birt, deat"""
-    person = Individual()
-    person.name = name
-    person.sex = sex
-    person.birt = datetime.datetime.strptime(birt, "%d %b %Y").date()
-    if deat != None:
-        person.deat = datetime.datetime.strptime(deat, "%d %b %Y").date()
-        person.alive = True
-    else:
-        person.alive = False
-    person.update_age()
-    return person
-
 class ProjectTest(unittest.TestCase):
     """Tests that our GEDCOM parser is working properly"""
 

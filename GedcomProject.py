@@ -157,7 +157,7 @@ class CheckForErrors:
         self.marr_before_div()
         if print_errors == True:
             self.print_errors()
-            
+
     def dates_before_curr(self):
         """US01: Tests to ensure any dates do not occur after current date"""
         for fam in self.family.values():
@@ -167,7 +167,7 @@ class CheckForErrors:
                 self.all_errors+=["US01: The marriage of {} and {} cannot occur after the current date.".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
             if(divDate != None and divDate>datetime.datetime.now().date()):
                 self.all_errors+=["US01: The divorce of {} and {} cannot occur after the current date.".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
-                
+
         for indi in self.individuals.values():
             birthday=indi.birt
             deathDay=indi.deat
@@ -192,8 +192,20 @@ class CheckForErrors:
             elif(birth_wife>marr_date):
                 self.all_errors += ["US02: {}'s birth can not occur after their date of marriage".format(self.individuals[fam.wife].name)]
 
+    def birth_before_death(self):
+        """US03: Tests to ensure that birth occurs before the death of an individual"""
+        for person in self.individuals.values():
+            if person.deat != None and (person.deat - person.birt).days < 0:
+                raise ValueError("US03: {}'s death can not occur before their date of birth".format(person.name))
+
+    def marr_before_div(self):
+        """US04: Tests to ensure that marriage dates come before divorce dates"""
+        for fam in self.family.values():
+            if fam.div != None and (fam.div - fam.marr).days < 0:
+                self.all_errors += ["US04: {} and {}'s divorce can not occur before their date of marriage".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
+
     def marr_div_before_death(self):
-        """This tests to make sure that no one was married or divorced after they died"""
+        """US05 & US06: This tests to make sure that no one was married or divorced after they died"""
         for fam in self.family.values():
             deat_husb = self.individuals[fam.husb].deat
             deat_wife = self.individuals[fam.wife].deat
@@ -214,7 +226,7 @@ class CheckForErrors:
                     check_wife_m = (deat_wife - marr_date).days
                     check_wife_d = (deat_wife - div_date).days
             if check_husb_m < 0 or check_wife_m < 0 or check_husb_d < 0 or check_wife_d < 0:
-                self.all_errors += ["Either {} or {} were married or divorced after they died".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
+                self.all_errors += ["US05 & US06: Either {} or {} were married or divorced after they died".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
 
     def normal_age(self):
         """US07: Checks to make sure that the person's age is less than 150 years old"""
@@ -223,7 +235,7 @@ class CheckForErrors:
                 self.all_errors += ["US07: {}'s age calculated ({}) is over 150 years old".format(individual.name, individual.age)]
 
     def birth_before_marriage(self):
-        """US:08 This checks to see if someone was born before the parents were married
+        """US08: This checks to see if someone was born before the parents were married
             or 9 months after divorce"""
         for individual in self.individuals.values():
             birth_date = individual.birt #each individual birthday
@@ -235,18 +247,6 @@ class CheckForErrors:
                     self.all_errors += ["US08: {} was born before their parents were married".format(individual.name)]
                 elif divorce_date != None and diff_divorce_and_birth_date > 9:
                     self.all_errors += ["US08: {} was born {} months after their parents were divorced".format(individual.name, diff_divorce_and_birth_date)]
-
-    def birth_before_death(self):
-        """US03: Tests to ensure that birth occurs before the death of an individual"""
-        for person in self.individuals.values():
-            if person.deat != None and (person.deat - person.birt).days < 0:
-                raise ValueError("{}'s death can not occur before their date of birth".format(person.name))
-
-    def marr_before_div(self):
-        """US04: Tests to ensure that marriage dates come before divorce dates"""
-        for fam in self.family.values():
-            if fam.div != None and (fam.div - fam.marr).days < 0:
-                self.all_errors += ["{} and {}'s divorce can not occur before their date of marriage".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
 
     def print_errors(self):
         """After all error messages have been compiled into the list of errors the program prints them all out"""

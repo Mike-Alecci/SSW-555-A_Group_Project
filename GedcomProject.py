@@ -158,6 +158,10 @@ class CheckForErrors:
         if print_errors == True:
             self.print_errors()
 
+    def date_difference(self, d1, d2):
+        """Returns true if the difference between the two dates is positive: [d1 - d2]"""
+        return (d1 - d2).days
+
     def dates_before_curr(self):
         """US01: Tests to ensure any dates do not occur after current date"""
         for fam in self.family.values():
@@ -195,13 +199,13 @@ class CheckForErrors:
     def birth_before_death(self):
         """US03: Tests to ensure that birth occurs before the death of an individual"""
         for person in self.individuals.values():
-            if person.deat != None and (person.deat - person.birt).days < 0:
+            if person.deat != None and self.date_difference(person.deat, person.birt) < 0:
                 self.all_errors += ["US03: {}'s death can not occur before their date of birth".format(person.name)]
 
     def marr_before_div(self):
         """US04: Tests to ensure that marriage dates come before divorce dates"""
         for fam in self.family.values():
-            if fam.div != None and (fam.div - fam.marr).days < 0:
+            if fam.div != None and self.date_difference(fam.div, fam.marr) < 0:
                 self.all_errors += ["US04: {} and {}'s divorce can not occur before their date of marriage".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
 
     def marr_div_before_death(self):

@@ -148,18 +148,22 @@ class CheckForErrors:
         self.individuals = ind_dict
         self.family = fam_dict
         self.all_errors = list()
-        self.brith_before_death_of_parents()
-        self.dates_before_curr()
-        self.indi_birth_before_marriage()
-        self.birth_before_marriage()
-        self.marr_div_before_death()
-        self.birth_before_death()
-        self.normal_age()
-        self.marr_before_div()
-        self.no_bigamy()
-        self.parents_too_old()
-        self.too_many_siblings()
-        self.spouses_too_young()
+        self.dates_before_curr() #US01
+        self.indi_birth_before_marriage() #US02
+        self.birth_before_death() #US03
+        self.marr_before_div() #US04
+        self.marr_div_before_death() #US05 & US06
+        self.normal_age() #US07
+        self.birth_before_marriage() #US08
+        self.brith_before_death_of_parents() #US09
+        self.spouses_too_young() #US10
+        self.no_bigamy() #US11
+        self.parents_too_old() #US12
+        #Call US13 Here
+        #Call US14 Here
+        self.too_many_siblings() #US15
+        #Call US16 Here
+
         if print_errors == True:
             self.print_errors()
 
@@ -201,6 +205,18 @@ class CheckForErrors:
             elif(birth_wife>marr_date):
                 self.all_errors += ["US02: {}'s birth can not occur after their date of marriage".format(self.individuals[fam.wife].name)]
 
+    def birth_before_death(self):
+        """US03: Tests to ensure that birth occurs before the death of an individual"""
+        for person in self.individuals.values():
+            if person.deat != None and self.date_difference(person.deat, person.birt) < 0:
+                self.all_errors += ["US03: {}'s death can not occur before their date of birth".format(person.name)]
+
+    def marr_before_div(self):
+        """US04: Tests to ensure that marriage dates come before divorce dates"""
+        for fam in self.family.values():
+            if fam.div != None and self.date_difference(fam.div, fam.marr) < 0:
+                self.all_errors += ["US04: {} and {}'s divorce can not occur before their date of marriage".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
+
     def marr_div_before_death(self):
         """US05 & US06: This tests to make sure that no one was married or divorced after they died"""
         for fam in self.family.values():
@@ -234,7 +250,7 @@ class CheckForErrors:
                 self.all_errors += ["US07: {}'s age calculated ({}) is over 150 years old".format(individual.name, individual.age)]
 
     def birth_before_marriage(self):
-        """US:08 This checks to see if someone was born before the parents were married
+        """US08: This checks to see if someone was born before the parents were married
             or 9 months after divorce"""
         for individual in self.individuals.values():
             birth_date = individual.birt #each individual birthday
@@ -266,17 +282,16 @@ class CheckForErrors:
                     if mother_difference >= 0:
                         self.all_errors += ["US09: {} was born after mother died".format(individual.name)]
 
-    def birth_before_death(self):
-        """US03: Tests to ensure that birth occurs before the death of an individual"""
-        for person in self.individuals.values():
-            if person.deat != None and self.date_difference(person.deat, person.birt) < 0:
-                self.all_errors += ["US03: {}'s death can not occur before their date of birth".format(person.name)]
-
-    def marr_before_div(self):
-        """US04: Tests to ensure that marriage dates come before divorce dates"""
-        for fam in self.family.values():
-            if fam.div != None and self.date_difference(fam.div, fam.marr) < 0:
-                self.all_errors += ["US04: {} and {}'s divorce can not occur before their date of marriage".format(self.individuals[fam.husb].name, self.individuals[fam.wife].name)]
+    def spouses_too_young(self):
+        """US10: Checks to make sure that each spouse of a family is older than 14 years old when
+        they get married"""
+        for individual in self.individuals.values():
+            if len(individual.fams) > 0:
+                for family in individual.fams:
+                    marriage_date = self.family[family].marr
+                    marriage_difference = marriage_date.year - individual.birt.year
+                    if marriage_difference <= 14:
+                        self.all_errors += ["US10: {} was only {} years old when they got married".format(individual.name, marriage_difference)]
 
     def no_bigamy(self):
         """US11: Tests to ensure marriage does not occur during marriage with someone else"""
@@ -316,12 +331,6 @@ class CheckForErrors:
                     prev_marr_date = self.family[spouse].marr
                     prev_div_date = self.family[spouse].div
 
-    def add_errors_if_new(self, error):
-        """This method is here to add errors to the error list if they do not occur, in order to ensure no duplicates.
-            Some user stories may flag duplicate errors and this method eliminates the issue."""
-        if error not in self.all_errors:
-            self.all_errors += [error]
-
     def parents_too_old(self):
         """US12: This method tests to ensure that parents in a family are not too old.
         Mother should be less than 60 years older than children.
@@ -334,22 +343,17 @@ class CheckForErrors:
             if self.individuals[self.family[indi.famc].wife].age > (indi.age + 60): #check the mother
                 self.all_errors += ["US12: {} is over 60 years older than his child {}".format(self.individuals[self.family[indi.famc].wife].name, indi.name)]
 
-    def spouses_too_young(self):
-        """US10: Checks to make sure that each spouse of a family is older than 14 years old when
-        they get married"""
-        for individual in self.individuals.values():
-            if len(individual.fams) > 0:
-                for family in individual.fams:
-                    marriage_date = self.family[family].marr
-                    marriage_difference = marriage_date.year - individual.birt.year
-                    if marriage_difference <= 14:
-                        self.all_errors += ["US10: {} was only {} years old when they got married".format(individual.name, marriage_difference)]
-
     def too_many_siblings(self):
         """US15: Tests to ensure that there are fewer than 15 siblings in a family"""
         for fam in self.family.values():
             if len(fam.chil)>=15:
                 self.all_errors+=["US15: The {} family has 15 or more siblings".format(self.individuals[fam.husb].fams)]
+
+    def add_errors_if_new(self, error):
+        """This method is here to add errors to the error list if they do not occur, in order to ensure no duplicates.
+            Some user stories may flag duplicate errors and this method eliminates the issue."""
+        if error not in self.all_errors:
+            self.all_errors += [error]
 
     def print_errors(self):
         """After all error messages have been compiled into the list of errors the program prints them all out"""

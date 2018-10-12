@@ -30,6 +30,20 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
+    def test_birth_before_death(self):
+        """US03: Unit Test: to ensure that birth occurs before the death of an individual"""
+        list_of_known_errors = ["US03: James /Nicholas/'s death can not occur before their date of birth",
+                                "US03: Peter /Tosh/'s death can not occur before their date of birth"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_marr_before_div(self):
+        """US04: Unit Test: to ensure that marriage dates come before divorce dates"""
+        list_of_known_errors = [
+            "US04: Johnson /Deere/ and Emily /Deere/'s divorce can not occur before their date of marriage"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
     def test_marr_div_before_death(self):
         """US05 & US06: Tests that the marr_div_before_death method works properly, the list of known errors is manually hard coded.
         It contains all of the errors we have intentionally put into the file and ensures the file catches them"""
@@ -46,6 +60,18 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
+    def test_birth_before_marriage(self):
+        """US08: Tests to see if birth_before_marriage function is working properly
+            Will raise exceptions if birth is before marriage or 9
+            months after the divorce of the parents"""
+        #Tests child is born 1 month before parents are married
+        list_of_known_errors = [
+            "US08: Jimmy /Shmoe/ was born before their parents were married",
+            "US08: Sammy /Shmoe/ was born 60 months after their parents were divorced"]
+        #self.num_of_errors += len(list_of_known_errors)
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
     def test_birth_before_death_of_parents(self):
         """US09: Test if someone was born before their parent died"""
         list_of_known_errors = [
@@ -56,29 +82,13 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
-    def test_birth_before_death(self):
-        """US03: Unit Test: to ensure that birth occurs before the death of an individual"""
-        list_of_known_errors = ["US03: James /Nicholas/'s death can not occur before their date of birth",
-                                "US03: Peter /Tosh/'s death can not occur before their date of birth"]
-        for error in list_of_known_errors:
-            self.assertIn(error, self.all_errors)
-
-    def test_marr_before_div(self):
-        """US04: Unit Test: to ensure that marriage dates come before divorce dates"""
+    def test_spouses_too_young(self):
+        """US10: Tests that the parents do not get married to each other when they are
+        younger than 14 years old"""
         list_of_known_errors = [
-            "US04: Johnson /Deere/ and Emily /Deere/'s divorce can not occur before their date of marriage"]
-        for error in list_of_known_errors:
-            self.assertIn(error, self.all_errors)
-
-    def test_birth_before_marriage(self):
-        """US08: Tests to see if birth_before_marriage function is working properly
-            Will raise exceptions if birth is before marriage or 9
-            months after the divorce of the parents"""
-        #Tests child is born 1 month before parents are married
-        list_of_known_errors = [
-            "US08: Jimmy /Shmoe/ was born before their parents were married",
-            "US08: Sammy /Shmoe/ was born 60 months after their parents were divorced"]
-        #self.num_of_errors += len(list_of_known_errors)
+            "US10: Bobby /Bourne/ was only -1 years old when they got married",
+            "US10: Ann /Joene/ was only 13 years old when they got married",
+            "US10: Nick /Jackson/ was only 9 years old when they got married"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
@@ -96,22 +106,17 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
-    def test_spouses_too_young(self):
-        """US10: Tests that the parents do not get married to each other when they are
-        younger than 14 years old"""
-        list_of_known_errors = [
-            "US10: Bobby /Bourne/ was only -1 years old when they got married",
-            "US10: Ann /Joene/ was only 13 years old when they got married",
-            "US10: Nick /Jackson/ was only 9 years old when they got married"]
-        for error in list_of_known_errors:
-            self.assertIn(error, self.all_errors)
+    #INSERT US13 TEST HERE
 
+    #INSERT US14 TEST HERE
 
     def test_too_many_siblings(self):
         """US15: Test: Makes sure too_many_siblings function works properly"""
         list_of_known_errors = ["US15: The {'F14'} family has 15 or more siblings"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
+
+    #INSERT US16 TEST HERE
 
 if __name__ == '__main__':
     unittest.main(exit=False, verbosity=2)

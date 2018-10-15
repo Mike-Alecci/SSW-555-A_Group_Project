@@ -260,7 +260,7 @@
 1 NAME Thirteen /Fif/
 1 SEX M
 1 BIRT
-2 DATE 1 JAN 2006
+2 DATE 6 JAN 2006
 1 FAMC @F14@
 0 @I43@ INDI
 1 NAME Fourteen /Fif/
@@ -414,7 +414,7 @@
 2 DATE 1 JAN 1961
 1 FAMC @F20@
 1 FAMS @F21@
-0 NOTE Start of the Families
+0 NOTE -----------------Start of the Families-------------------
 0 @F1@ FAM
 1 HUSB @I1@
 1 WIFE @I2@
@@ -547,16 +547,16 @@
 0 @F18@ FAM
 1 HUSB @I57@
 1 WIFE @I58@
-1 MARR 
+1 MARR
 2 DATE 15 FEB 1920
-1 DIV 
+1 DIV
 2 DATE 16 MAR 1935
 1 CHIL @I59@
 1 CHIL @I60@
 0 @F19@ FAM
 1 HUSB @I60@
 1 WIFE @I61@
-1 MARR 
+1 MARR
 2 DATE 20 FEB 1940
 1 CHIL @I62@
 0 @F20@ FAM

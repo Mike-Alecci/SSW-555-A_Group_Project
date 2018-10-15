@@ -1,6 +1,7 @@
 from prettytable import PrettyTable
 import datetime
 from collections import defaultdict
+from copy import deepcopy
 import os
 
 class AnalyzeGEDCOM:
@@ -159,7 +160,7 @@ class CheckForErrors:
         self.spouses_too_young() #US10
         self.no_bigamy() #US11
         self.parents_too_old() #US12
-        #Call US13 Here
+        self.sibling_spacing() #US13
         #Call US14 Here
         self.too_many_siblings() #US15
         self.no_marriage_to_descendants()
@@ -343,12 +344,34 @@ class CheckForErrors:
             if self.individuals[self.family[indi.famc].wife].age > (indi.age + 60): #check the mother
                 self.all_errors += ["US12: {} is over 60 years older than his child {}".format(self.individuals[self.family[indi.famc].wife].name, indi.name)]
 
+    def sibling_spacing(self):
+        """US13: Makes sure that birth dates of siblings should be more than 8 months apart
+        or less than 2 days apart (twins may be born one day apart, e.g. 11:59 PM and 12:02 AM the following calendar day)"""
+        for fam in self.family.values():
+            childIDLstCopy = deepcopy(list(fam.chil))
+            childIDLstCopy.sort() #needs to be sorted since every time the program runs, the order of the children set changes
+
+            for i in range(len(childIDLstCopy)):
+                for j in range(i + 1, len(childIDLstCopy)):
+                    child1 = self.individuals[childIDLstCopy[i]]
+                    child2 = self.individuals[childIDLstCopy[j]]
+                    daysApart = abs(child1.birt.day - child2.birt.day)
+                    monthsApart = abs(child1.birt.month - child2.birt.month)
+                    if daysApart > 2 and monthsApart < 8 :
+                        self.all_errors += ["US13: Siblings {} and {}'s births are only ".format(child1.name, child2.name) + str(daysApart) + " days apart"]
+
+
+
+    def too_many_births(self):
+        """US14: Makes sure that no more than five siblings should be born at the same time"""
+        #for fam in self.family.values():
+
     def too_many_siblings(self):
         """US15: Tests to ensure that there are fewer than 15 siblings in a family"""
         for fam in self.family.values():
             if len(fam.chil)>=15:
                 self.all_errors+=["US15: The {} family has 15 or more siblings".format(self.individuals[fam.husb].fams)]
-               
+
     def descendants_help(self, initial_indi, current_indi ):
         """Recursive helper for US17"""
         if(len(current_indi.fams)>0):
@@ -357,7 +380,7 @@ class CheckForErrors:
                     self.all_errors+=["US17: {} cannot be married to their descendant {}".format(initial_indi.name, current_indi.name)]
                 for child in self.family[fam].chil:
                     self.descendants_help(initial_indi,self.individuals[child])
-    
+
     def no_marriage_to_descendants(self):
         """US17: Tests to ensure that individuals and their descendants do not marry each other"""
         for person in self.individuals.values(): #Traverse all individuals and do a top down search of all descendants

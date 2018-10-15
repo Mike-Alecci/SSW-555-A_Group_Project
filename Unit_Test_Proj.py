@@ -106,7 +106,24 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
-    #INSERT US13 TEST HERE
+    def test_sibling_spacing(self):
+        list_of_known_errors = ["US13: Siblings One /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
+                                "US13: Siblings Two /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
+                                "US13: Siblings Three /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
+                                "US13: Siblings Four /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
+                                "US13: Siblings Five /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
+                                "US13: Siblings Six /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
+                                "US13: Siblings Seven /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
+                                "US13: Siblings Eight /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
+                                "US13: Siblings Nine /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
+                                "US13: Siblings Ten /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
+                                "US13: Siblings El /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
+                                "US13: Siblings Twelve /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
+                                "US13: Siblings Thirteen /Fif/ and Fourteen /Fif/'s births are only 5 days apart",
+                                "US13: Siblings Thirteen /Fif/ and Fifteen /Fif/'s births are only 5 days apart",
+                                "US13: Siblings Allen /Leffe/ and Ava /Leffe/'s births are only 9 days apart"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
 
     #INSERT US14 TEST HERE
 

@@ -161,7 +161,7 @@ class CheckForErrors:
         self.no_bigamy() #US11
         self.parents_too_old() #US12
         self.sibling_spacing() #US13
-        #Call US14 Here
+        self.too_many_births()
         self.too_many_siblings() #US15
         self.no_marriage_to_descendants()
 
@@ -364,13 +364,29 @@ class CheckForErrors:
 
     def too_many_births(self):
         """US14: Makes sure that no more than five siblings should be born at the same time"""
-        #for fam in self.family.values():
+        for fam in self.family.values():
+            childIDLstCopy = deepcopy(list(fam.chil))
+            childIDLstCopy.sort() #needs to be sorted since every time the program runs, the order of the children set changes
+
+            birthDayDict = {}
+            for i in range(len(childIDLstCopy)):
+                child = self.individuals[childIDLstCopy[i]]
+                if child.birt not in birthDayDict:
+                    birthDayDict[child.birt] = 1
+                else:
+                    birthDayDict[child.birt] = birthDayDict[child.birt] + 1
+            for key in birthDayDict:
+                if birthDayDict[key] > 5:
+                    familyName = str(self.individuals[fam.husb].name).split()[-1]
+                    self.all_errors += ["US14: The {} family has more than five children born at the same time".format(familyName)]
+
 
     def too_many_siblings(self):
         """US15: Tests to ensure that there are fewer than 15 siblings in a family"""
         for fam in self.family.values():
             if len(fam.chil)>=15:
-                self.all_errors+=["US15: The {} family has 15 or more siblings".format(self.individuals[fam.husb].fams)]
+                familyName = str(self.individuals[fam.husb].name).split()[-1]
+                self.all_errors+=["US15: The {} family has 15 or more siblings".format(familyName)]
 
     def descendants_help(self, initial_indi, current_indi ):
         """Recursive helper for US17"""

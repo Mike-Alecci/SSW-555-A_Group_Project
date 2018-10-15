@@ -107,6 +107,8 @@ class ProjectTest(unittest.TestCase):
             self.assertIn(error, self.all_errors)
 
     def test_sibling_spacing(self):
+        """US13: Tests thatbirth dates of siblings should be more than 8 months apart or less than 2 days apart
+        (twins may be born one day apart, e.g. 11:59 PM and 12:02 AM the following calendar day)"""
         list_of_known_errors = ["US13: Siblings One /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
                                 "US13: Siblings Two /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
                                 "US13: Siblings Three /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
@@ -125,7 +127,11 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
-    #INSERT US14 TEST HERE
+    def test_too_many_births(self):
+        """US14: Tests that no more than five siblings should be born at the same time"""
+        list_of_known_errors = ["US14: The /Fif/ family has more than five children born at the same time"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
 
     def test_too_many_siblings(self):
         """US15: Test: Makes sure too_many_siblings function works properly"""

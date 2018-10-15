@@ -116,7 +116,11 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
-    #INSERT US16 TEST HERE
+    def test_no_marriage_to_descendents(self):
+        """US16: Test: Makes sure no_marriage_to_siblings finds all individiuals married to one fof their descendants"""
+        list_of_known_errors = ["US16: John /Leffe/ cannot be married to their descendant Ava /Leffe/"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
 
 if __name__ == '__main__':
     unittest.main(exit=False, verbosity=2)

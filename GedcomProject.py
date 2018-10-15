@@ -350,16 +350,16 @@ class CheckForErrors:
                 self.all_errors+=["US15: The {} family has 15 or more siblings".format(self.individuals[fam.husb].fams)]
                
     def descendants_help(self, initial_indi, current_indi ):
-        """Recursive helper for US16"""
+        """Recursive helper for US17"""
         if(len(current_indi.fams)>0):
             for fam in current_indi.fams:
                 if (self.individuals[self.family[fam].husb] == initial_indi or self.individuals[self.family[fam].wife] == initial_indi):
-                    self.all_errors+=["US16: {} cannot be married to their descendant {}".format(initial_indi.name, current_indi.name)]
+                    self.all_errors+=["US17: {} cannot be married to their descendant {}".format(initial_indi.name, current_indi.name)]
                 for child in self.family[fam].chil:
                     self.descendants_help(initial_indi,self.individuals[child])
     
     def no_marriage_to_descendants(self):
-        """US16: Tests to ensure that individuals and their descendants do not marry each other"""
+        """US17: Tests to ensure that individuals and their descendants do not marry each other"""
         for person in self.individuals.values(): #Traverse all individuals and do a top down search of all descendants
             if(len(person.fams)>0):
                 for fam in person.fams:

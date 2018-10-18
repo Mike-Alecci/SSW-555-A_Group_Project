@@ -326,6 +326,7 @@
 1 BIRT
 2 DATE 9 SEP 1994
 1 FAMS @F17@
+0 @I52@ INDI
 0 @I53@ INDI
 1 NAME Marsha /Tolen/
 1 SEX F
@@ -414,12 +415,24 @@
 2 DATE 1 JAN 1961
 1 FAMC @F20@
 1 FAMS @F21@
+0 NOTE US23 the following two individuals have the same names and birthdays as the previous two individuals
+0 @I66@ INDI
+1 NAME Ava /Leffe/
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 1961
+0 @I67@ INDI
+1 NAME Allen /Leffe/
+1 SEX M
+1 BIRT
+2 DATE 10 MAR 1961
 0 NOTE -----------------Start of the Families-------------------
 0 @F1@ FAM
 1 HUSB @I1@
 1 WIFE @I2@
 1 MARR
 2 DATE 2 APR 1993
+0 @F1@ FAM
 0 @F2@ FAM
 1 HUSB @I3@
 1 WIFE @I4@

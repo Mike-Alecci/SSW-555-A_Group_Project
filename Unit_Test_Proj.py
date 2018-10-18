@@ -145,5 +145,19 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
+    def test_unique_ids(self):
+        """US22: Tests to ensure that all IDS are unique"""
+        list_of_known_errors = ["US22: The individual ID: I52, already exists, this ID is not unique",
+                                "US22: The family ID: F1, already exists, this ID is not unique"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_unique_names_and_bdays(self):
+        """US23: Tests to ensure there are no individuals with the same name and birthdate"""
+        list_of_known_errors = ["US23: An idividual with the name: Ava /Leffe/, and birthday: 1961-01-01, already exists!",
+                                "US23: An idividual with the name: Allen /Leffe/, and birthday: 1961-03-10, already exists!"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
 if __name__ == '__main__':
     unittest.main(exit=False, verbosity=2)

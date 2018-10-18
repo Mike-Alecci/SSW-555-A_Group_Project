@@ -10,12 +10,13 @@ class AnalyzeGEDCOM:
         self.file_name = file_name
         self.family = dict()        #dictionary with Key = FamID Value = Family class object
         self.individuals = dict()   #dictionary with Key = IndiID Value = Individual class object
+        self.errors = []
         self.fam_table = PrettyTable(field_names = ["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"])
         self.indi_table = PrettyTable(field_names = ["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"])
         self.analyze()
         if create_tables:           #allows to easily toggle the print of the pretty table on and off
             self.create_pretty_tables()
-        self.all_errors = CheckForErrors(self.individuals, self.family, print_errors).all_errors
+        self.all_errors = CheckForErrors(self.individuals, self.family, self.errors, print_errors).all_errors
 
     def analyze(self):
         """This method reads in each line and determines if a new family or individual need to be made, if not then it sends the line
@@ -28,12 +29,18 @@ class AnalyzeGEDCOM:
             elif line[0] == '0' and line [2] == "INDI":
                 current_type = 1                                            #Marker used to ensure following lines are analyzed as individual
                 indiv = line[1].replace("@", "")                            #The GEDCOM file from online has @ID@ format, this replaces it
-                self.individuals[indiv] = Individual()                      #The instance of a Individual class object is created
+                if indiv in self.individuals.keys():                        #If there is a duplicate ID report it
+                    self.errors += ["US22: The individual ID: {}, already exists, this ID is not unique".format(indiv)]
+                else:
+                    self.individuals[indiv] = Individual()                  #The instance of a Individual class object is created
                 continue
             elif line[0] == '0' and line[2] == "FAM":
                 current_type = 2                                            #Marker used to ensure following lines are analyzed as family
                 fam = line[1].replace("@", "")
-                self.family[fam] = Family()                                 #The instance of a Family class object is created
+                if fam in self.family.keys():                               #If there is a duplicate ID report it
+                    self.errors += ["US22: The family ID: {}, already exists, this ID is not unique".format(fam)]
+                else:
+                    self.family[fam] = Family()                             #The instance of a Family class object is created
                 continue
             if current_type in [1,2]:                                       #No new Individual or Family was created, analyze line further
                 self.analyze_info(line, previous_line, indiv, fam, current_type)
@@ -143,12 +150,12 @@ class Individual:
 
 class CheckForErrors:
     """This class runs through all the user stories and looks for possible errors in the GEDCOM data"""
-    def __init__(self, ind_dict, fam_dict, print_errors):
+    def __init__(self, ind_dict, fam_dict, errors, print_errors):
         """This instantiates variables in this class to the dictionaries of families and individuals from
         the AnalyzeGEDCOM class, it also calls all US methods while providing an option to print all errors"""
         self.individuals = ind_dict
         self.family = fam_dict
-        self.all_errors = list()
+        self.all_errors = errors
         self.dates_before_curr() #US01
         self.indi_birth_before_marriage() #US02
         self.birth_before_death() #US03
@@ -164,6 +171,7 @@ class CheckForErrors:
         self.too_many_births()
         self.too_many_siblings() #US15
         self.no_marriage_to_descendants()
+        self.unique_names_and_bdays() #US23
 
         if print_errors == True:
             self.print_errors()
@@ -405,6 +413,15 @@ class CheckForErrors:
                     for child in self.family[fam].chil:
                         self.descendants_help(person,self.individuals[child])
 
+    def unique_names_and_bdays(self):
+        """US23: Tests to ensure there are no individuals with the same name and birthdate"""
+        names_and_bdays = []
+        for person in self.individuals.values():
+            if (person.name, person.birt) in names_and_bdays:
+                self.all_errors += ["US23: An idividual with the name: {}, and birthday: {}, already exists!".format(person.name, person.birt)]
+            else:
+                names_and_bdays += [(person.name, person.birt)]
+
     def add_errors_if_new(self, error):
         """This method is here to add errors to the error list if they do not occur, in order to ensure no duplicates.
             Some user stories may flag duplicate errors and this method eliminates the issue."""
@@ -416,7 +433,7 @@ class CheckForErrors:
         if len(self.all_errors) == 0:
             print("Congratulations this GEDCOM file has no known errors!")
         else:
-            for error in self.all_errors:
+            for error in sorted(self.all_errors):
                 print(error)
 
 def main():

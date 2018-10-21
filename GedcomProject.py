@@ -172,6 +172,7 @@ class CheckForErrors:
         self.too_many_siblings() #US15
         self.no_marriage_to_descendants()
         self.unique_names_and_bdays() #US23
+        self.unique_spouses_in_family() #US24
 
         if print_errors == True:
             self.print_errors()
@@ -369,7 +370,6 @@ class CheckForErrors:
                         self.all_errors += ["US13: Siblings {} and {}'s births are only ".format(child1.name, child2.name) + str(daysApart) + " days apart"]
 
 
-
     def too_many_births(self):
         """US14: Makes sure that no more than five siblings should be born at the same time"""
         for fam in self.family.values():
@@ -421,6 +421,19 @@ class CheckForErrors:
                 self.all_errors += ["US23: An idividual with the name: {}, and birthday: {}, already exists!".format(person.name, person.birt)]
             else:
                 names_and_bdays += [(person.name, person.birt)]
+
+    def unique_spouses_in_family(self):
+        """US24: Checks to see if only one family has spouses with the same names 
+            and marriage dates. Will indicate if there is more than one family with same spouses
+            and marriage date"""
+        unique_families = [] # input in the form (husband name, wife name, marriage date)
+        for family in self.family.values():
+            husb_name = self.individuals[family.husb].name
+            wife_name = self.individuals[family.wife].name
+            if (husb_name, wife_name, family.marr) in unique_families:
+                self.all_errors += ["US24: The family with spouses {} and {} married on {} occurs more than once in the GEDCOM file.".format(husb_name, wife_name, family.marr)]
+            else:
+                unique_families += [(husb_name, wife_name, family.marr)]
 
     def add_errors_if_new(self, error):
         """This method is here to add errors to the error list if they do not occur, in order to ensure no duplicates.

@@ -584,3 +584,16 @@
 1 WIFE @I65@
 1 MARR
 2 DATE 11 FEB 1980
+0 NOTE US24, the following families are duplicates of previous families
+0 @F22@ FAM
+1 HUSB @I57@
+1 WIFE @I65@
+1 MARR
+2 DATE 11 FEB 1980
+0 @F23@ FAM
+1 HUSB @I21@
+1 WIFE @I22@
+1 MARR
+2 DATE 15 MAR 2045
+1 DIV
+2 DATE 3 JAN 2049

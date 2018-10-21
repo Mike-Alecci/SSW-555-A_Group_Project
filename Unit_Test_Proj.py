@@ -159,5 +159,15 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
+    def test_unique_spouses_in_family(self):
+        """US24: Tests to ensure that there are no duplicate family entries, with the same
+            spouses (by name) and marriage dates"""
+        list_of_known_errors = [
+            "US24: The family with spouses Future /Trunks/ and Mai /Trunks/ married on 2045-03-15 occurs more than once in the GEDCOM file.",
+            "US24: The family with spouses John /Leffe/ and Ava /Leffe/ married on 1980-02-11 occurs more than once in the GEDCOM file."            
+            ]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
 if __name__ == '__main__':
     unittest.main(exit=False, verbosity=2)

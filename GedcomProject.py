@@ -173,6 +173,7 @@ class CheckForErrors:
         self.no_marriage_to_descendants()
         self.unique_names_and_bdays() #US23
         self.unique_spouses_in_family() #US24
+        self.unique_children_in_family() #US25
 
         if print_errors == True:
             self.print_errors()
@@ -434,6 +435,18 @@ class CheckForErrors:
                 self.all_errors += ["US24: The family with spouses {} and {} married on {} occurs more than once in the GEDCOM file.".format(husb_name, wife_name, family.marr)]
             else:
                 unique_families += [(husb_name, wife_name, family.marr)]
+
+    def unique_children_in_family(self):
+        """US25: Checks to make sure that each child in a family has a unique name and birthdate"""
+        for ID, family in self.family.items():
+            unique_child_names = []
+            for child in family.chil:
+                child_name = self.individuals[child].name
+                child_bday = self.individuals[child].birt
+                if (child_name, child_bday) in unique_child_names:
+                    self.all_errors += ["US25: There is more than one child with the name {} and birthdate {} in family {}".format(child_name, child_bday, ID)]
+                else:
+                    unique_child_names += [(child_name, child_bday)]
 
     def add_errors_if_new(self, error):
         """This method is here to add errors to the error list if they do not occur, in order to ensure no duplicates.

@@ -169,5 +169,15 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
+    def test_unique_children_in_family(self):
+        """US25: Tests to ensure that there are no duplicate children within the same family
+            with the same name and the same birthdate"""
+        list_of_known_errors = [
+            "US25: There is more than one child with the name Lauren /Leffe/ and birthdate 1921-03-08 in family F18",
+            "US25: There is more than one child with the name Sloham /Jog/ and birthdate 1990-01-17 in family F24"
+            ]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
 if __name__ == '__main__':
     unittest.main(exit=False, verbosity=2)

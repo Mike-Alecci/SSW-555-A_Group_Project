@@ -426,6 +426,37 @@
 1 SEX M
 1 BIRT
 2 DATE 10 MAR 1961
+0 NOTE US25: Family with duplicate children
+0 @I68@ INDI
+1 NAME Johnny /Quick/
+1 SEX M
+1 BIRT
+2 DATE 11 JAN 1957
+1 FAMS @F24@
+0 @I69@ INDI
+1 NAME Jayln /Slow/
+1 SEX F
+1 BIRT
+2 DATE 10 JAN 1958
+1 FAMS @F24@
+0 @I70@ INDI
+1 NAME Sloham /Jog/
+1 SEX M
+1 BIRT
+2 DATE 17 JAN 1990
+1 FAMC @F24@
+0 @I71@ INDI
+1 NAME Sloham /Jog/
+1 SEX M
+1 BIRT
+2 DATE 17 JAN 1990
+1 FAMC @F24@
+0 @I72@ INDI
+1 NAME Lauren /Leffe/
+1 SEX F
+1 BIRT
+2 DATE 8 MAR 1921
+1 FAMC @F18@
 0 NOTE -----------------Start of the Families-------------------
 0 @F1@ FAM
 1 HUSB @I1@
@@ -566,6 +597,7 @@
 2 DATE 16 MAR 1935
 1 CHIL @I59@
 1 CHIL @I60@
+1 CHIL @I72@
 0 @F19@ FAM
 1 HUSB @I60@
 1 WIFE @I61@
@@ -584,7 +616,7 @@
 1 WIFE @I65@
 1 MARR
 2 DATE 11 FEB 1980
-0 NOTE US24, the following families are duplicates of previous families
+0 NOTE US24: the following families are duplicates of previous families
 0 @F22@ FAM
 1 HUSB @I57@
 1 WIFE @I65@
@@ -597,3 +629,11 @@
 2 DATE 15 MAR 2045
 1 DIV
 2 DATE 3 JAN 2049
+0 NOTE US25: Family with more than one child with same name and birthdate
+0 @F24@ FAM
+1 HUSB @I68@
+1 WIFE @I69@
+1 MARR
+2 DATE 15 MAR 1980
+1 CHIL @I70@
+1 CHIL @I71@

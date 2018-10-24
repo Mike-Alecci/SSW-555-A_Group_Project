@@ -457,6 +457,30 @@
 1 BIRT
 2 DATE 8 MAR 1921
 1 FAMC @F18@
+0 @I73@ INDI
+1 NAME Martha /Par/
+1 SEX F
+1 BIRT
+2 DATE 18 JAN 1960
+0 @I74@ INDI
+1 NAME Far /Par/
+1 SEX M
+1 BIRT
+2 DATE 5 MAR 1960
+0 @I75@ INDI
+1 NAME Gorl /Sib/
+1 SEX F
+1 BIRT 
+2 DATE 19 MAR 1985
+1 FAMS @F26@
+1 FAMC @F25@
+0 @I76@ INDI
+1 NAME Boyle /Sib/
+1 SEX M
+1 BIRT 
+2 DATE 25 MAR 1986
+1 FAMS @F26@
+1 FAMC @F25@
 0 NOTE -----------------Start of the Families-------------------
 0 @F1@ FAM
 1 HUSB @I1@
@@ -637,3 +661,16 @@
 2 DATE 15 MAR 1980
 1 CHIL @I70@
 1 CHIL @I71@
+0 NOTE US18: Families to create siblings that marry each other
+0 @F25@ FAM
+1 HUSB @I73@
+1 WIFE @I74@
+1 MARR
+2 DATE 1 JAN 1980
+1 CHIL @I75@
+1 CHIL @I76@
+0 @F26@ FAM
+1 HUSB @I76@
+1 WIFE @I75@
+1 MARR
+2 DATE 1 JAN 2005

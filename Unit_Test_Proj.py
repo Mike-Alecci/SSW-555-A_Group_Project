@@ -135,6 +135,13 @@ class ProjectTest(unittest.TestCase):
         list_of_known_errors = ["US17: John /Leffe/ cannot be married to their descendant Ava /Leffe/"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
+    
+    def test_no_marriage_to_siblings(self):
+        """US18: Test: Makes sure no_marriage_to_siblings finds all individuals married to one of their siblings"""
+        list_of_known_errors = ["US18: Boyle /Sib/ cannot be married to their sibling Gorl /Sib/", 
+                                "US18: Gorl /Sib/ cannot be married to their sibling Boyle /Sib/"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
 
     def test_unique_ids(self):
         """US22: Tests to ensure that all IDS are unique"""

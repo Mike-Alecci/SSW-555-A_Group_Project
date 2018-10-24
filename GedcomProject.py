@@ -170,7 +170,8 @@ class CheckForErrors:
         self.sibling_spacing() #US13
         self.too_many_births()
         self.too_many_siblings() #US15
-        self.no_marriage_to_descendants()
+        self.no_marriage_to_descendants()#US17
+        self.no_marriage_to_siblings() #US18
         self.unique_names_and_bdays() #US23
         self.unique_spouses_in_family() #US24
         self.unique_children_in_family() #US25
@@ -413,6 +414,20 @@ class CheckForErrors:
                 for fam in person.fams:
                     for child in self.family[fam].chil:
                         self.descendants_help(person,self.individuals[child])
+                        
+    def no_marriage_to_siblings(self):
+        """US18: Tests to ensure that individuals do not marry their siblings"""
+        for person in self.individuals.values():
+            if(len(person.fams)>0):
+                for fam in person.fams:
+                    tempHusb = self.family[fam].husb
+                    tempWife = self.family[fam].wife
+                    if(person.famc != None):
+                        if(tempHusb in self.family[person.famc].chil and self.individuals[self.family[fam].husb] != person):
+                            self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[self.family[fam].husb].name)]
+                        elif(tempWife in self.family[person.famc].chil and self.individuals[self.family[fam].wife] != person):
+                            self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[self.family[fam].wife].name)]
+                    
 
     def unique_names_and_bdays(self):
         """US23: Tests to ensure there are no individuals with the same name and birthdate"""

@@ -109,21 +109,12 @@ class ProjectTest(unittest.TestCase):
     def test_sibling_spacing(self):
         """US13: Tests thatbirth dates of siblings should be more than 8 months apart or less than 2 days apart
         (twins may be born one day apart, e.g. 11:59 PM and 12:02 AM the following calendar day)"""
-        list_of_known_errors = ["US13: Siblings One /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Two /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Three /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Four /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Five /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Six /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Seven /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Eight /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Nine /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Ten /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings El /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Twelve /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Thirteen /Fif/ and Fourteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Thirteen /Fif/ and Fifteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Allen /Leffe/ and Ava /Leffe/'s births are only 9 days apart"]
+        list_of_known_errors = ["US13: Siblings Allen /Leffe/ and Ava /Leffe/'s births are 68 days apart",
+                                "US13: Siblings Bill /Leffe/ and Lauren /Leffe/'s births are 59 days apart",
+                                "US13: Siblings Jimmy /James/ and Jackie /James/'s births are 45 days apart",
+                                "US13: Siblings Lauren /Leffe/ and Bill /Leffe/'s births are 59 days apart",
+                                "US13: Siblings Thirteen /Fif/ and Fifteen /Fif/'s births are 5 days apart",
+                                "US13: Siblings Thirteen /Fif/ and Fourteen /Fif/'s births are 5 days apart"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
@@ -164,7 +155,7 @@ class ProjectTest(unittest.TestCase):
             spouses (by name) and marriage dates"""
         list_of_known_errors = [
             "US24: The family with spouses Future /Trunks/ and Mai /Trunks/ married on 2045-03-15 occurs more than once in the GEDCOM file.",
-            "US24: The family with spouses John /Leffe/ and Ava /Leffe/ married on 1980-02-11 occurs more than once in the GEDCOM file."            
+            "US24: The family with spouses John /Leffe/ and Ava /Leffe/ married on 1980-02-11 occurs more than once in the GEDCOM file."
             ]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)

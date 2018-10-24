@@ -365,10 +365,10 @@ class CheckForErrors:
                 for j in range(i + 1, len(childIDLstCopy)):
                     child1 = self.individuals[childIDLstCopy[i]]
                     child2 = self.individuals[childIDLstCopy[j]]
-                    daysApart = abs(child1.birt.day - child2.birt.day)
-                    monthsApart = abs(child1.birt.month - child2.birt.month)
+                    daysApart = abs(child1.birt - child2.birt).days
+                    monthsApart = abs((child1.birt.year - child2.birt.year) * 12 + child1.birt.month - child2.birt.month)
                     if daysApart > 2 and monthsApart < 8 :
-                        self.all_errors += ["US13: Siblings {} and {}'s births are only ".format(child1.name, child2.name) + str(daysApart) + " days apart"]
+                        self.all_errors += ["US13: Siblings {} and {}'s births are ".format(child1.name, child2.name) + str(daysApart) + " days apart"]
 
 
     def too_many_births(self):
@@ -424,7 +424,7 @@ class CheckForErrors:
                 names_and_bdays += [(person.name, person.birt)]
 
     def unique_spouses_in_family(self):
-        """US24: Checks to see if only one family has spouses with the same names 
+        """US24: Checks to see if only one family has spouses with the same names
             and marriage dates. Will indicate if there is more than one family with same spouses
             and marriage date"""
         unique_families = [] # input in the form (husband name, wife name, marriage date)

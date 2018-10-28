@@ -135,11 +135,21 @@ class ProjectTest(unittest.TestCase):
         list_of_known_errors = ["US17: John /Leffe/ cannot be married to their descendant Ava /Leffe/"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
-    
+
     def test_no_marriage_to_siblings(self):
         """US18: Test: Makes sure no_marriage_to_siblings finds all individuals married to one of their siblings"""
-        list_of_known_errors = ["US18: Boyle /Sib/ cannot be married to their sibling Gorl /Sib/", 
+        list_of_known_errors = ["US18: Boyle /Sib/ cannot be married to their sibling Gorl /Sib/",
                                 "US18: Gorl /Sib/ cannot be married to their sibling Boyle /Sib/"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_correct_gender_role(self):
+        """US21: Tests to ensure husband in family should be male and wife in family should be female"""
+        list_of_known_errors = ["US21: The husband in the Par family, (Martha /Par/), is a female!",
+                                "US21: The husband in the Switcheroo family, (James /Switcheroo/), is a female!",
+                                "US21: The wife in the Johnson family, (Sammy /Johnson/), is a male!",
+                                "US21: The wife in the Par family, (Far /Par/), is a male!",
+                                "US21: The wife in the Switcheroo family, (Jenny /Switcheroo/), is a male!",]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 

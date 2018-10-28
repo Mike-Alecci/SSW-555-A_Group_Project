@@ -172,6 +172,7 @@ class CheckForErrors:
         self.too_many_siblings() #US15
         self.no_marriage_to_descendants()#US17
         self.no_marriage_to_siblings() #US18
+        self.correct_gender_role() #US21
         self.unique_names_and_bdays() #US23
         self.unique_spouses_in_family() #US24
         self.unique_children_in_family() #US25
@@ -414,7 +415,7 @@ class CheckForErrors:
                 for fam in person.fams:
                     for child in self.family[fam].chil:
                         self.descendants_help(person,self.individuals[child])
-                        
+
     def no_marriage_to_siblings(self):
         """US18: Tests to ensure that individuals do not marry their siblings"""
         for person in self.individuals.values():
@@ -427,7 +428,18 @@ class CheckForErrors:
                             self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[self.family[fam].husb].name)]
                         elif(tempWife in self.family[person.famc].chil and self.individuals[self.family[fam].wife] != person):
                             self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[self.family[fam].wife].name)]
-                    
+
+    def correct_gender_role(self):
+        """US21: Husband in family should be male and wife in family should be female"""
+        for fam in self.family.values():
+            familyName = str(self.individuals[fam.husb].name).split()[-1].strip("/")
+            husband = self.individuals[fam.husb]
+            wife = self.individuals[fam.wife]
+            if husband.sex == "F":
+                self.all_errors += ["US21: The husband in the {} family, ({}), is a female!".format(familyName, husband.name)]
+            if wife.sex == "M":
+                self.all_errors += ["US21: The wife in the {} family, ({}), is a male!".format(familyName, wife.name)]
+
 
     def unique_names_and_bdays(self):
         """US23: Tests to ensure there are no individuals with the same name and birthdate"""

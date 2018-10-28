@@ -493,6 +493,46 @@
 1 BIRT
 2 DATE 19 OCT 1982
 1 FAMS @F27@
+0 NOTE US20: The following individuals make up a family that had a child married to their uncle
+0 @I79@ INDI
+1 NAME Grandpa /Pigsty/
+1 SEX M
+1 BIRT
+2 DATE 19 OCT 1920
+1 FAMS @F28@
+0 @I80@ INDI
+1 NAME Grandma /Pigsty/
+1 SEX F
+1 BIRT
+2 DATE 30 OCT 1920
+1 FAMS @F28@
+0 @I81@ INDI
+1 NAME Mother /Pigsty/
+1 SEX F
+1 BIRT
+2 DATE 31 AUG 1947
+1 FAMS @F29@
+0 @I82@ INDI
+1 NAME Father /Pigsty/
+1 SEX M
+1 BIRT
+2 DATE 31 OCT 1947
+1 FAMS @F29@
+1 FAMC @F28@
+0 @I83@ INDI
+1 NAME Uncle /Pigsty/
+1 SEX M
+1 BIRT
+2 DATE 5 MAR 1948
+1 FAMC @F28@
+1 FAMS @F30@
+0 @I84@ INDI
+1 NAME Niece /Pigsty/
+1 SEX F
+1 BIRT
+2 DATE 5 MAR 1960
+1 FAMC @F29@
+1 FAMS @F30@
 0 NOTE -----------------Start of the Families-------------------
 0 @F1@ FAM
 1 HUSB @I1@
@@ -691,3 +731,22 @@
 1 WIFE @I78@
 1 MARR
 2 DATE 6 FEB 2004
+0 NOTE US20: the following family has kid married to the uncle
+0 @F28@ FAM
+1 HUSB @I79@
+1 WIFE @I80@
+1 MARR
+2 DATE 7 AUG 1945
+1 CHIL @I82@
+1 CHIL @I83@
+0 @F29@ FAM
+1 HUSB @I81@
+1 WIFE @I82@
+1 MARR
+2 DATE 7 AUG 1967
+1 CHIL @I84@
+0 @F30@ FAM
+1 HUSB @I83@
+1 WIFE @I84@
+1 MARR
+2 DATE 7 AUG 1980

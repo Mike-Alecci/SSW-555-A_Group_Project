@@ -172,6 +172,7 @@ class CheckForErrors:
         self.too_many_siblings() #US15
         self.no_marriage_to_descendants()#US17
         self.no_marriage_to_siblings() #US18
+        self.creepy_aunts_and_uncles() #US20
         self.correct_gender_role() #US21
         self.unique_names_and_bdays() #US23
         self.unique_spouses_in_family() #US24
@@ -428,6 +429,39 @@ class CheckForErrors:
                             self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[self.family[fam].husb].name)]
                         elif(tempWife in self.family[person.famc].chil and self.individuals[self.family[fam].wife] != person):
                             self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[self.family[fam].wife].name)]
+
+
+    def get_childrenID(self, indi_ID):
+        """returns a list of children IDs of the given individual ID"""
+        childrenLst = []
+        #an indivual can remarry and therefore have multiple families, hence the loop
+        for family in self.individuals[indi_ID].fams:
+            if len(self.family[family].chil) != 0:
+                childrenLst += self.family[family].chil
+        return childrenLst
+
+    def get_spouse(self, indi_ID):
+        """returns the current spouse of the given individual ID"""
+        for family in self.individuals[indi_ID].fams:
+            if self.family[family].div == None:
+                if self.individuals[indi_ID].sex == "M":
+                    return self.family[family].wife
+                else:
+                    return self.family[family].husb
+
+    def creepy_aunts_and_uncles(self):
+        """US20: Ensures that aunts and uncles should not marry their nieces or nephews"""
+        #go through set of children from each family,
+        # then go through children of each sibling to make sure they are not married to the other siblings
+        for fam in self.family.values():
+            siblingIDs = fam.chil #set of sibling IDs
+            if len(siblingIDs) != 0: #if there are siblings
+                for sib in siblingIDs: #string for the sibling ID
+                    for child in self.get_childrenID(sib):
+                        if self.get_spouse(child) in siblingIDs:
+                            self.all_errors += ["US20: {} is married to their aunt or uncle".format(self.individuals[child].name)]
+
+
 
     def correct_gender_role(self):
         """US21: Husband in family should be male and wife in family should be female"""

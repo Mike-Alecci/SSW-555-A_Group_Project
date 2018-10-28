@@ -143,6 +143,12 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
+    def test_creepy_aunts_and_uncles(self):
+        """US20: Tests to ensure that aunts and uncles should not marry their nieces or nephews"""
+        list_of_known_errors = ["US20: Niece /Pigsty/ is married to their aunt or uncle"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
     def test_correct_gender_role(self):
         """US21: Tests to ensure husband in family should be male and wife in family should be female"""
         list_of_known_errors = ["US21: The husband in the Par family, (Martha /Par/), is a female!",

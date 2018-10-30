@@ -142,6 +142,13 @@ class ProjectTest(unittest.TestCase):
                                 "US18: Gorl /Sib/ cannot be married to their sibling Boyle /Sib/"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
+            
+    def test_no_marriage_to_cousin(self):
+        """US19: Tests to ensure that no_marriage_to_cousin finds all individuals married to their cousin"""
+        list_of_known_errors =["US19: Curr /Two/ cannot be married to their cousin Cuz /One/",
+                                "US19: Currt /Two/ cannot be married to their cousin Cuzt /Two/"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
 
     def test_creepy_aunts_and_uncles(self):
         """US20: Tests to ensure that aunts and uncles should not marry their nieces or nephews"""

@@ -138,8 +138,7 @@ class ProjectTest(unittest.TestCase):
 
     def test_no_marriage_to_siblings(self):
         """US18: Test: Makes sure no_marriage_to_siblings finds all individuals married to one of their siblings"""
-        list_of_known_errors = ["US18: Boyle /Sib/ cannot be married to their sibling Gorl /Sib/",
-                                "US18: Gorl /Sib/ cannot be married to their sibling Boyle /Sib/"]
+        list_of_known_errors = ["US18: Gorl /Sib/ cannot be married to their sibling Boyle /Sib/"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
             

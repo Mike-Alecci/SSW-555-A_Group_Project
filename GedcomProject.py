@@ -172,6 +172,7 @@ class CheckForErrors:
         self.too_many_siblings() #US15
         self.no_marriage_to_descendants()#US17
         self.no_marriage_to_siblings() #US18
+        self.no_marriage_to_cousin() #US19
         self.creepy_aunts_and_uncles() #US20
         self.correct_gender_role() #US21
         self.unique_names_and_bdays() #US23
@@ -429,7 +430,26 @@ class CheckForErrors:
                             self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[self.family[fam].husb].name)]
                         elif(tempWife in self.family[person.famc].chil and self.individuals[self.family[fam].wife] != person):
                             self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[self.family[fam].wife].name)]
-
+                            
+    def no_marriage_to_cousin(self):
+        """US19: Tests to ensure that individuals do not marry their first cousins"""
+        couples = []
+        for fam in self.family.values():
+            mom = fam.wife
+            dad = fam.husb
+            for currIndi in fam.chil:
+                if self.individuals[mom].famc != None:
+                    for auntUncle in self.family[self.individuals[mom].famc].chil:    #mom's siblings
+                        for cousin in self.get_childrenID(auntUncle):                   #cousin's on mom's side
+                            if self.get_spouse(cousin) == currIndi and [currIndi,cousin] not in couples:
+                                self.all_errors+=["US19: {} cannot be married to their cousin {}".format(self.individuals[currIndi].name, self.individuals[cousin].name)]
+                                couples.append([cousin,currIndi])
+                if self.individuals[dad].famc != None:
+                    for auntUncle in self.family[self.individuals[dad].famc].chil:  #dad's siblings
+                        for cousin in self.get_childrenID(auntUncle):               #cousins on dad's side
+                            if self.get_spouse(cousin) == currIndi and [currIndi,cousin] not in couples:
+                                self.all_errors+=["US19: {} cannot be married to their cousin {}".format(self.individuals[currIndi].name, self.individuals[cousin].name)]
+                                couples.append( [cousin,currIndi])
 
     def get_childrenID(self, indi_ID):
         """returns a list of children IDs of the given individual ID"""

@@ -420,16 +420,19 @@ class CheckForErrors:
 
     def no_marriage_to_siblings(self):
         """US18: Tests to ensure that individuals do not marry their siblings"""
+        couples = []
         for person in self.individuals.values():
             if(len(person.fams)>0):
                 for fam in person.fams:
                     tempHusb = self.family[fam].husb
                     tempWife = self.family[fam].wife
                     if(person.famc != None):
-                        if(tempHusb in self.family[person.famc].chil and self.individuals[self.family[fam].husb] != person):
-                            self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[self.family[fam].husb].name)]
-                        elif(tempWife in self.family[person.famc].chil and self.individuals[self.family[fam].wife] != person):
-                            self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[self.family[fam].wife].name)]
+                        if(tempHusb in self.family[person.famc].chil and self.individuals[tempHusb] != person and [self.individuals[tempHusb].name,person.name] not in couples):
+                            self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[tempHusb].name)]
+                            couples.append([person.name,self.individuals[tempHusb].name])
+                        elif(tempWife in self.family[person.famc].chil and self.individuals[tempWife] != person and [self.individuals[tempWife].name,person.name] not in couples):
+                            self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[tempWife].name)]
+                            couples.append([person.name,self.individuals[tempWife].name])
                             
     def no_marriage_to_cousin(self):
         """US19: Tests to ensure that individuals do not marry their first cousins"""

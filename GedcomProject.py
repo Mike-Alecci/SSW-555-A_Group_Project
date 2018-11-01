@@ -156,28 +156,30 @@ class CheckForErrors:
         self.individuals = ind_dict
         self.family = fam_dict
         self.all_errors = errors
-        self.dates_before_curr() #US01
-        self.indi_birth_before_marriage() #US02
-        self.birth_before_death() #US03
-        self.marr_before_div() #US04
-        self.marr_div_before_death() #US05 & US06
-        self.normal_age() #US07
-        self.birth_before_marriage() #US08
+        self.dates_before_curr()             #US01
+        self.indi_birth_before_marriage()    #US02
+        self.birth_before_death()            #US03
+        self.marr_before_div()               #US04
+        self.marr_div_before_death()         #US05 & US06
+        self.normal_age()                    #US07
+        self.birth_before_marriage()         #US08
         self.brith_before_death_of_parents() #US09
-        self.spouses_too_young() #US10
-        self.no_bigamy() #US11
-        self.parents_too_old() #US12
-        self.sibling_spacing() #US13
-        self.too_many_births()
-        self.too_many_siblings() #US15
-        self.no_marriage_to_descendants()#US17
-        self.no_marriage_to_siblings() #US18
-        self.no_marriage_to_cousin() #US19
-        self.creepy_aunts_and_uncles() #US20
-        self.correct_gender_role() #US21
-        self.unique_names_and_bdays() #US23
-        self.unique_spouses_in_family() #US24
-        self.unique_children_in_family() #US25
+        self.spouses_too_young()             #US10
+        self.no_bigamy()                     #US11
+        self.parents_too_old()               #US12
+        self.sibling_spacing()               #US13
+        self.too_many_births()               #US14
+        self.too_many_siblings()             #US15
+        self.no_marriage_to_descendants()    #US17
+        self.no_marriage_to_siblings()       #US18
+        self.no_marriage_to_cousin()         #US19
+        self.creepy_aunts_and_uncles()       #US20
+        self.correct_gender_role()           #US21
+        self.unique_names_and_bdays()        #US23
+        self.unique_spouses_in_family()      #US24
+        self.unique_children_in_family()     #US25
+        self.list_deceased()                 #US29
+        self.list_living_married()           #US30
 
         if print_errors == True:
             self.print_errors()
@@ -531,6 +533,19 @@ class CheckForErrors:
                     self.all_errors += ["US25: There is more than one child with the name {} and birthdate {} in family {}".format(child_name, child_bday, ID)]
                 else:
                     unique_child_names += [(child_name, child_bday)]
+
+    def list_deceased(self):
+        """US29: This method lists all of the deceased people in the GEDCOM file"""
+        for person in self.individuals.values():
+            if person.deat != None:
+                self.all_errors += ["US29: {} is deceased".format(person.name)]
+
+    def list_living_married(self):
+        """US30: This method lists all of the living married people in the GEDCOM file"""
+        for family in self.family.values():
+            if family.div != None:
+                self.add_errors_if_new("US30: {} is alive and married".format(self.individuals[family.husb].name))
+                self.add_errors_if_new("US30: {} is alive and married".format(self.individuals[family.wife].name))
 
     def add_errors_if_new(self, error):
         """This method is here to add errors to the error list if they do not occur, in order to ensure no duplicates.

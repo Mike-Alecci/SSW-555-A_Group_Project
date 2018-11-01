@@ -199,5 +199,25 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
+    def test_list_deceased(self):
+        """US29: Tests to ensure that all deceased individuals are listed"""
+        list_of_known_errors = ["US29: Future /Trunks/ is deceased","US29: James /Nicholas/ is deceased",
+        "US29: Jessica /Joseline/ is deceased", "US29: John /Old/ is deceased", 
+        "US29: Johnny /James/ is deceased", "US29: Mark /Eff/ is deceased", 
+        "US29: Peter /Tosh/ is deceased", "US29: Stevie /Wonder/ is deceased", "US29: Troy /Johnson/ is deceased"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_list_living_married(self):
+        """US30: Tests to ensure that all individuals who are alive and still married are listed"""
+        list_of_known_errors = ["US30: Emily /Deere/ is alive and married", "US30: Future /Trunks/ is alive and married", 
+        "US30: Jane /Leffe/ is alive and married", "US30: Jen /Smith/ is alive and married", 
+        "US30: Joe /Shmoe/ is alive and married", "US30: John /Leffe/ is alive and married", 
+        "US30: Johnson /Deere/ is alive and married", "US30: Mai /Trunks/ is alive and married", 
+        "US30: Mary /Shmoe/ is alive and married", "US30: Matt /Smith/ is alive and married", 
+        "US30: Sammy /Johnson/ is alive and married", "US30: Troy /Johnson/ is alive and married"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
 if __name__ == '__main__':
     unittest.main(exit=False, verbosity=2)

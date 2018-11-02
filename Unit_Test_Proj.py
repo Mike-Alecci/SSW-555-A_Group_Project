@@ -199,6 +199,15 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
+    def test_list_ages(self):
+        """US27: Tests to ensure that people's ages are properly being calculated when listed in
+            the GEDCOM table"""
+        list_of_known_errors = [
+            "US27: John /Old/ calculated age is 1000 == 1000 years old"
+        ]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
     def test_list_deceased(self):
         """US29: Tests to ensure that all deceased individuals are listed"""
         list_of_known_errors = ["US29: Future /Trunks/ is deceased","US29: James /Nicholas/ is deceased",

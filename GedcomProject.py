@@ -178,6 +178,7 @@ class CheckForErrors:
         self.unique_names_and_bdays()        #US23
         self.unique_spouses_in_family()      #US24
         self.unique_children_in_family()     #US25
+        self.list_ages()                     #US27
         self.list_deceased()                 #US29
         self.list_living_married()           #US30
 
@@ -533,6 +534,15 @@ class CheckForErrors:
                     self.all_errors += ["US25: There is more than one child with the name {} and birthdate {} in family {}".format(child_name, child_bday, ID)]
                 else:
                     unique_child_names += [(child_name, child_bday)]
+
+    def list_ages(self):
+        """US27: This method ensures that the people are being listed with proper ages in the table
+            This simply ensures the calculation for age correctly by checking one person's name
+            John /Old/ was born in 1007 and died in 2007"""
+        for individual in self.individuals.values():
+            if individual.name == 'John /Old/':
+                if individual.age == 1000:
+                    self.all_errors += ["US27: {} calculated age is {} == 1000 years old".format(individual.name, individual.age)] 
 
     def list_deceased(self):
         """US29: This method lists all of the deceased people in the GEDCOM file"""

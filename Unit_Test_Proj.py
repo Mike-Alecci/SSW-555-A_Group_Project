@@ -109,21 +109,12 @@ class ProjectTest(unittest.TestCase):
     def test_sibling_spacing(self):
         """US13: Tests thatbirth dates of siblings should be more than 8 months apart or less than 2 days apart
         (twins may be born one day apart, e.g. 11:59 PM and 12:02 AM the following calendar day)"""
-        list_of_known_errors = ["US13: Siblings One /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Two /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Three /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Four /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Five /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Six /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Seven /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Eight /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Nine /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Ten /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings El /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Twelve /Fif/ and Thirteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Thirteen /Fif/ and Fourteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Thirteen /Fif/ and Fifteen /Fif/'s births are only 5 days apart",
-                                "US13: Siblings Allen /Leffe/ and Ava /Leffe/'s births are only 9 days apart"]
+        list_of_known_errors = ["US13: Siblings Allen /Leffe/ and Ava /Leffe/'s births are 68 days apart",
+                                "US13: Siblings Bill /Leffe/ and Lauren /Leffe/'s births are 59 days apart",
+                                "US13: Siblings Jimmy /James/ and Jackie /James/'s births are 45 days apart",
+                                "US13: Siblings Lauren /Leffe/ and Bill /Leffe/'s births are 59 days apart",
+                                "US13: Siblings Thirteen /Fif/ and Fifteen /Fif/'s births are 5 days apart",
+                                "US13: Siblings Thirteen /Fif/ and Fourteen /Fif/'s births are 5 days apart"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
@@ -142,6 +133,89 @@ class ProjectTest(unittest.TestCase):
     def test_no_marriage_to_descendents(self):
         """US17: Test: Makes sure no_marriage_to_siblings finds all individiuals married to one fof their descendants"""
         list_of_known_errors = ["US17: John /Leffe/ cannot be married to their descendant Ava /Leffe/"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_no_marriage_to_siblings(self):
+        """US18: Test: Makes sure no_marriage_to_siblings finds all individuals married to one of their siblings"""
+        list_of_known_errors = ["US18: Gorl /Sib/ cannot be married to their sibling Boyle /Sib/"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+            
+    def test_no_marriage_to_cousin(self):
+        """US19: Tests to ensure that no_marriage_to_cousin finds all individuals married to their cousin"""
+        list_of_known_errors =["US19: Curr /Two/ cannot be married to their cousin Cuz /One/",
+                                "US19: Currt /Two/ cannot be married to their cousin Cuzt /Two/"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_creepy_aunts_and_uncles(self):
+        """US20: Tests to ensure that aunts and uncles should not marry their nieces or nephews"""
+        list_of_known_errors = ["US20: Niece /Pigsty/ is married to their aunt or uncle"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_correct_gender_role(self):
+        """US21: Tests to ensure husband in family should be male and wife in family should be female"""
+        list_of_known_errors = ["US21: The husband in the Par family, (Martha /Par/), is a female!",
+                                "US21: The husband in the Switcheroo family, (James /Switcheroo/), is a female!",
+                                "US21: The wife in the Johnson family, (Sammy /Johnson/), is a male!",
+                                "US21: The wife in the Par family, (Far /Par/), is a male!",
+                                "US21: The wife in the Switcheroo family, (Jenny /Switcheroo/), is a male!",]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_unique_ids(self):
+        """US22: Tests to ensure that all IDS are unique"""
+        list_of_known_errors = ["US22: The individual ID: I52, already exists, this ID is not unique",
+                                "US22: The family ID: F1, already exists, this ID is not unique"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_unique_names_and_bdays(self):
+        """US23: Tests to ensure there are no individuals with the same name and birthdate"""
+        list_of_known_errors = ["US23: An idividual with the name: Ava /Leffe/, and birthday: 1961-01-01, already exists!",
+                                "US23: An idividual with the name: Allen /Leffe/, and birthday: 1961-03-10, already exists!"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_unique_spouses_in_family(self):
+        """US24: Tests to ensure that there are no duplicate family entries, with the same
+            spouses (by name) and marriage dates"""
+        list_of_known_errors = [
+            "US24: The family with spouses Future /Trunks/ and Mai /Trunks/ married on 2045-03-15 occurs more than once in the GEDCOM file.",
+            "US24: The family with spouses John /Leffe/ and Ava /Leffe/ married on 1980-02-11 occurs more than once in the GEDCOM file."
+            ]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_unique_children_in_family(self):
+        """US25: Tests to ensure that there are no duplicate children within the same family
+            with the same name and the same birthdate"""
+        list_of_known_errors = [
+            "US25: There is more than one child with the name Lauren /Leffe/ and birthdate 1921-03-08 in family F18",
+            "US25: There is more than one child with the name Sloham /Jog/ and birthdate 1990-01-17 in family F24"
+            ]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_list_deceased(self):
+        """US29: Tests to ensure that all deceased individuals are listed"""
+        list_of_known_errors = ["US29: Future /Trunks/ is deceased","US29: James /Nicholas/ is deceased",
+        "US29: Jessica /Joseline/ is deceased", "US29: John /Old/ is deceased", 
+        "US29: Johnny /James/ is deceased", "US29: Mark /Eff/ is deceased", 
+        "US29: Peter /Tosh/ is deceased", "US29: Stevie /Wonder/ is deceased", "US29: Troy /Johnson/ is deceased"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
+    def test_list_living_married(self):
+        """US30: Tests to ensure that all individuals who are alive and still married are listed"""
+        list_of_known_errors = ["US30: Emily /Deere/ is alive and married", "US30: Future /Trunks/ is alive and married", 
+        "US30: Jane /Leffe/ is alive and married", "US30: Jen /Smith/ is alive and married", 
+        "US30: Joe /Shmoe/ is alive and married", "US30: John /Leffe/ is alive and married", 
+        "US30: Johnson /Deere/ is alive and married", "US30: Mai /Trunks/ is alive and married", 
+        "US30: Mary /Shmoe/ is alive and married", "US30: Matt /Smith/ is alive and married", 
+        "US30: Sammy /Johnson/ is alive and married", "US30: Troy /Johnson/ is alive and married"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 

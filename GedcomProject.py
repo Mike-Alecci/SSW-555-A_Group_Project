@@ -10,12 +10,13 @@ class AnalyzeGEDCOM:
         self.file_name = file_name
         self.family = dict()        #dictionary with Key = FamID Value = Family class object
         self.individuals = dict()   #dictionary with Key = IndiID Value = Individual class object
+        self.errors = []
         self.fam_table = PrettyTable(field_names = ["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"])
         self.indi_table = PrettyTable(field_names = ["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"])
         self.analyze()
         if create_tables:           #allows to easily toggle the print of the pretty table on and off
             self.create_pretty_tables()
-        self.all_errors = CheckForErrors(self.individuals, self.family, print_errors).all_errors
+        self.all_errors = CheckForErrors(self.individuals, self.family, self.errors, print_errors).all_errors
 
     def analyze(self):
         """This method reads in each line and determines if a new family or individual need to be made, if not then it sends the line
@@ -28,12 +29,18 @@ class AnalyzeGEDCOM:
             elif line[0] == '0' and line [2] == "INDI":
                 current_type = 1                                            #Marker used to ensure following lines are analyzed as individual
                 indiv = line[1].replace("@", "")                            #The GEDCOM file from online has @ID@ format, this replaces it
-                self.individuals[indiv] = Individual()                      #The instance of a Individual class object is created
+                if indiv in self.individuals.keys():                        #If there is a duplicate ID report it
+                    self.errors += ["US22: The individual ID: {}, already exists, this ID is not unique".format(indiv)]
+                else:
+                    self.individuals[indiv] = Individual()                  #The instance of a Individual class object is created
                 continue
             elif line[0] == '0' and line[2] == "FAM":
                 current_type = 2                                            #Marker used to ensure following lines are analyzed as family
                 fam = line[1].replace("@", "")
-                self.family[fam] = Family()                                 #The instance of a Family class object is created
+                if fam in self.family.keys():                               #If there is a duplicate ID report it
+                    self.errors += ["US22: The family ID: {}, already exists, this ID is not unique".format(fam)]
+                else:
+                    self.family[fam] = Family()                             #The instance of a Family class object is created
                 continue
             if current_type in [1,2]:                                       #No new Individual or Family was created, analyze line further
                 self.analyze_info(line, previous_line, indiv, fam, current_type)
@@ -143,27 +150,36 @@ class Individual:
 
 class CheckForErrors:
     """This class runs through all the user stories and looks for possible errors in the GEDCOM data"""
-    def __init__(self, ind_dict, fam_dict, print_errors):
+    def __init__(self, ind_dict, fam_dict, errors, print_errors):
         """This instantiates variables in this class to the dictionaries of families and individuals from
         the AnalyzeGEDCOM class, it also calls all US methods while providing an option to print all errors"""
         self.individuals = ind_dict
         self.family = fam_dict
-        self.all_errors = list()
-        self.dates_before_curr() #US01
-        self.indi_birth_before_marriage() #US02
-        self.birth_before_death() #US03
-        self.marr_before_div() #US04
-        self.marr_div_before_death() #US05 & US06
-        self.normal_age() #US07
-        self.birth_before_marriage() #US08
+        self.all_errors = errors
+        self.dates_before_curr()             #US01
+        self.indi_birth_before_marriage()    #US02
+        self.birth_before_death()            #US03
+        self.marr_before_div()               #US04
+        self.marr_div_before_death()         #US05 & US06
+        self.normal_age()                    #US07
+        self.birth_before_marriage()         #US08
         self.brith_before_death_of_parents() #US09
-        self.spouses_too_young() #US10
-        self.no_bigamy() #US11
-        self.parents_too_old() #US12
-        self.sibling_spacing() #US13
-        self.too_many_births()
-        self.too_many_siblings() #US15
-        self.no_marriage_to_descendants()
+        self.spouses_too_young()             #US10
+        self.no_bigamy()                     #US11
+        self.parents_too_old()               #US12
+        self.sibling_spacing()               #US13
+        self.too_many_births()               #US14
+        self.too_many_siblings()             #US15
+        self.no_marriage_to_descendants()    #US17
+        self.no_marriage_to_siblings()       #US18
+        self.no_marriage_to_cousin()         #US19
+        self.creepy_aunts_and_uncles()       #US20
+        self.correct_gender_role()           #US21
+        self.unique_names_and_bdays()        #US23
+        self.unique_spouses_in_family()      #US24
+        self.unique_children_in_family()     #US25
+        self.list_deceased()                 #US29
+        self.list_living_married()           #US30
 
         if print_errors == True:
             self.print_errors()
@@ -355,11 +371,10 @@ class CheckForErrors:
                 for j in range(i + 1, len(childIDLstCopy)):
                     child1 = self.individuals[childIDLstCopy[i]]
                     child2 = self.individuals[childIDLstCopy[j]]
-                    daysApart = abs(child1.birt.day - child2.birt.day)
-                    monthsApart = abs(child1.birt.month - child2.birt.month)
+                    daysApart = abs(child1.birt - child2.birt).days
+                    monthsApart = abs((child1.birt.year - child2.birt.year) * 12 + child1.birt.month - child2.birt.month)
                     if daysApart > 2 and monthsApart < 8 :
-                        self.all_errors += ["US13: Siblings {} and {}'s births are only ".format(child1.name, child2.name) + str(daysApart) + " days apart"]
-
+                        self.all_errors += ["US13: Siblings {} and {}'s births are ".format(child1.name, child2.name) + str(daysApart) + " days apart"]
 
 
     def too_many_births(self):
@@ -405,6 +420,133 @@ class CheckForErrors:
                     for child in self.family[fam].chil:
                         self.descendants_help(person,self.individuals[child])
 
+    def no_marriage_to_siblings(self):
+        """US18: Tests to ensure that individuals do not marry their siblings"""
+        couples = []
+        for person in self.individuals.values():
+            if(len(person.fams)>0):
+                for fam in person.fams:
+                    tempHusb = self.family[fam].husb
+                    tempWife = self.family[fam].wife
+                    if(person.famc != None):
+                        if(tempHusb in self.family[person.famc].chil and self.individuals[tempHusb] != person and [self.individuals[tempHusb].name,person.name] not in couples):
+                            self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[tempHusb].name)]
+                            couples.append([person.name,self.individuals[tempHusb].name])
+                        elif(tempWife in self.family[person.famc].chil and self.individuals[tempWife] != person and [self.individuals[tempWife].name,person.name] not in couples):
+                            self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[tempWife].name)]
+                            couples.append([person.name,self.individuals[tempWife].name])
+                            
+    def no_marriage_to_cousin(self):
+        """US19: Tests to ensure that individuals do not marry their first cousins"""
+        couples = []
+        for fam in self.family.values():
+            mom = fam.wife
+            dad = fam.husb
+            for currIndi in fam.chil:
+                if self.individuals[mom].famc != None:
+                    for auntUncle in self.family[self.individuals[mom].famc].chil:    #mom's siblings
+                        for cousin in self.get_childrenID(auntUncle):                   #cousin's on mom's side
+                            if self.get_spouse(cousin) == currIndi and [currIndi,cousin] not in couples:
+                                self.all_errors+=["US19: {} cannot be married to their cousin {}".format(self.individuals[currIndi].name, self.individuals[cousin].name)]
+                                couples.append([cousin,currIndi])
+                if self.individuals[dad].famc != None:
+                    for auntUncle in self.family[self.individuals[dad].famc].chil:  #dad's siblings
+                        for cousin in self.get_childrenID(auntUncle):               #cousins on dad's side
+                            if self.get_spouse(cousin) == currIndi and [currIndi,cousin] not in couples:
+                                self.all_errors+=["US19: {} cannot be married to their cousin {}".format(self.individuals[currIndi].name, self.individuals[cousin].name)]
+                                couples.append( [cousin,currIndi])
+
+    def get_childrenID(self, indi_ID):
+        """returns a list of children IDs of the given individual ID"""
+        childrenLst = []
+        #an indivual can remarry and therefore have multiple families, hence the loop
+        for family in self.individuals[indi_ID].fams:
+            if len(self.family[family].chil) != 0:
+                childrenLst += self.family[family].chil
+        return childrenLst
+
+    def get_spouse(self, indi_ID):
+        """returns the current spouse of the given individual ID"""
+        for family in self.individuals[indi_ID].fams:
+            if self.family[family].div == None:
+                if self.individuals[indi_ID].sex == "M":
+                    return self.family[family].wife
+                else:
+                    return self.family[family].husb
+
+    def creepy_aunts_and_uncles(self):
+        """US20: Ensures that aunts and uncles should not marry their nieces or nephews"""
+        #go through set of children from each family,
+        # then go through children of each sibling to make sure they are not married to the other siblings
+        for fam in self.family.values():
+            siblingIDs = fam.chil #set of sibling IDs
+            if len(siblingIDs) != 0: #if there are siblings
+                for sib in siblingIDs: #string for the sibling ID
+                    for child in self.get_childrenID(sib):
+                        if self.get_spouse(child) in siblingIDs:
+                            self.all_errors += ["US20: {} is married to their aunt or uncle".format(self.individuals[child].name)]
+
+
+
+    def correct_gender_role(self):
+        """US21: Husband in family should be male and wife in family should be female"""
+        for fam in self.family.values():
+            familyName = str(self.individuals[fam.husb].name).split()[-1].strip("/")
+            husband = self.individuals[fam.husb]
+            wife = self.individuals[fam.wife]
+            if husband.sex == "F":
+                self.all_errors += ["US21: The husband in the {} family, ({}), is a female!".format(familyName, husband.name)]
+            if wife.sex == "M":
+                self.all_errors += ["US21: The wife in the {} family, ({}), is a male!".format(familyName, wife.name)]
+
+
+    def unique_names_and_bdays(self):
+        """US23: Tests to ensure there are no individuals with the same name and birthdate"""
+        names_and_bdays = []
+        for person in self.individuals.values():
+            if (person.name, person.birt) in names_and_bdays:
+                self.all_errors += ["US23: An idividual with the name: {}, and birthday: {}, already exists!".format(person.name, person.birt)]
+            else:
+                names_and_bdays += [(person.name, person.birt)]
+
+    def unique_spouses_in_family(self):
+        """US24: Checks to see if only one family has spouses with the same names
+            and marriage dates. Will indicate if there is more than one family with same spouses
+            and marriage date"""
+        unique_families = [] # input in the form (husband name, wife name, marriage date)
+        for family in self.family.values():
+            husb_name = self.individuals[family.husb].name
+            wife_name = self.individuals[family.wife].name
+            if (husb_name, wife_name, family.marr) in unique_families:
+                self.all_errors += ["US24: The family with spouses {} and {} married on {} occurs more than once in the GEDCOM file.".format(husb_name, wife_name, family.marr)]
+            else:
+                unique_families += [(husb_name, wife_name, family.marr)]
+
+    def unique_children_in_family(self):
+        """US25: Checks to make sure that each child in a family has a unique name and birthdate"""
+        for ID, family in self.family.items():
+            unique_child_names = []
+            for child in family.chil:
+                child_name = self.individuals[child].name
+                child_bday = self.individuals[child].birt
+                if (child_name, child_bday) in unique_child_names:
+                    self.all_errors += ["US25: There is more than one child with the name {} and birthdate {} in family {}".format(child_name, child_bday, ID)]
+                else:
+                    unique_child_names += [(child_name, child_bday)]
+
+    def list_deceased(self):
+        """US29: This method lists all of the deceased people in the GEDCOM file"""
+        for person in self.individuals.values():
+            if person.deat != None:
+                self.all_errors += ["US29: {} is deceased".format(person.name)]
+
+    def list_living_married(self):
+        """US30: This method lists all of the living married people in the GEDCOM file"""
+        for family in self.family.values():
+            if family.div != None:
+                self.add_errors_if_new("US30: {} is alive and married".format(self.individuals[family.husb].name))
+                self.add_errors_if_new("US30: {} is alive and married".format(self.individuals[family.wife].name))
+
     def add_errors_if_new(self, error):
         """This method is here to add errors to the error list if they do not occur, in order to ensure no duplicates.
             Some user stories may flag duplicate errors and this method eliminates the issue."""
@@ -416,7 +558,7 @@ class CheckForErrors:
         if len(self.all_errors) == 0:
             print("Congratulations this GEDCOM file has no known errors!")
         else:
-            for error in self.all_errors:
+            for error in sorted(self.all_errors):
                 print(error)
 
 def main():

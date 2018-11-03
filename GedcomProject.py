@@ -146,7 +146,7 @@ class Individual:
             else:
                 self.age = self.deat.year - self.birt.year
         except AttributeError:
-            raise AttributeError("Improper records of birth/death, need proper birth/death date to calculate age")
+            raise AttributeError("US27: Improper records of birth/death for {}, need proper birth/death date to calculate age".format(self.name))
 
 class CheckForErrors:
     """This class runs through all the user stories and looks for possible errors in the GEDCOM data"""
@@ -263,7 +263,7 @@ class CheckForErrors:
         """US07: Checks to make sure that the person's age is less than 150 years old"""
         for individual in self.individuals.values():
             if individual.age == None:
-                print(individual.name)
+                pass
             if individual.age >= 150:
                 self.all_errors += ["US07: {}'s age calculated ({}) is over 150 years old".format(individual.name, individual.age)]
 
@@ -543,6 +543,9 @@ class CheckForErrors:
             if individual.name == 'John /Old/':
                 if individual.age == 1000:
                     self.all_errors += ["US27: {} calculated age is {} == 1000 years old".format(individual.name, individual.age)] 
+            elif individual.name == "Jess /Eff/": #known birthday and not known death date
+                if individual.age == 51:
+                    self.all_errors += ["US27: {} calculated age is {} == 51 years old".format(individual.name, individual.age)]
 
     def list_deceased(self):
         """US29: This method lists all of the deceased people in the GEDCOM file"""

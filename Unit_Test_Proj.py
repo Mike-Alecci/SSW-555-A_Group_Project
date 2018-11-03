@@ -203,10 +203,19 @@ class ProjectTest(unittest.TestCase):
         """US27: Tests to ensure that people's ages are properly being calculated when listed in
             the GEDCOM table"""
         list_of_known_errors = [
-            "US27: John /Old/ calculated age is 1000 == 1000 years old"
+            "US27: John /Old/ calculated age is 1000 == 1000 years old",
+            "US27: Jess /Eff/ calculated age is 51 == 51 years old"
         ]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
+        #Tests Exception (without birthday) - Raises AttributeError
+        test_ind_dict = {1 : Individual(), 2: Individual()} #creates dictionary of individuals
+        test_ind_dict[1].name, test_ind_dict[1].deat = "NoBirth /DateGuy/", datetime.datetime.strptime("9 MAR 1001", "%d %b %Y").date() 
+        test_ind_dict[2].name = "NoBirth /OrDeath/"        
+        with self.assertRaises(AttributeError): 
+            test_ind_dict[1].update_age()
+        with self.assertRaises(AttributeError): 
+            test_ind_dict[2].update_age()
 
     def test_list_deceased(self):
         """US29: Tests to ensure that all deceased individuals are listed"""

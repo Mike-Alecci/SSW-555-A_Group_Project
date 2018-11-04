@@ -217,6 +217,16 @@ class ProjectTest(unittest.TestCase):
         with self.assertRaises(AttributeError): 
             test_ind_dict[2].update_age()
 
+    def test_order_siblings_oldest_to_youngest(self):
+        """US28: Tests to ensure that siblings are ordered from oldest to youngest"""
+        list_of_known_errors = [
+            "US28: The children in family F15 from oldest to youngest are ['Jimmy /James/', 'Jackie /James/', 'Jacob /James/']",
+            "US28: The children in family F20 from oldest to youngest are ['Ava /Leffe/', 'Allen /Leffe/']",
+            "US28: The children in family F25 from oldest to youngest are ['Gorl /Sib/', 'Boyle /Sib/']"
+        ]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+            
     def test_list_deceased(self):
         """US29: Tests to ensure that all deceased individuals are listed"""
         list_of_known_errors = ["US29: Future /Trunks/ is deceased","US29: James /Nicholas/ is deceased",

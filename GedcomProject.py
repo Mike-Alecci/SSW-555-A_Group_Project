@@ -156,31 +156,32 @@ class CheckForErrors:
         self.individuals = ind_dict
         self.family = fam_dict
         self.all_errors = errors
-        self.dates_before_curr()             #US01
-        self.indi_birth_before_marriage()    #US02
-        self.birth_before_death()            #US03
-        self.marr_before_div()               #US04
-        self.marr_div_before_death()         #US05 & US06
-        self.normal_age()                    #US07
-        self.birth_before_marriage()         #US08
-        self.brith_before_death_of_parents() #US09
-        self.spouses_too_young()             #US10
-        self.no_bigamy()                     #US11
-        self.parents_too_old()               #US12
-        self.sibling_spacing()               #US13
-        self.too_many_births()               #US14
-        self.too_many_siblings()             #US15
-        self.no_marriage_to_descendants()    #US17
-        self.no_marriage_to_siblings()       #US18
-        self.no_marriage_to_cousin()         #US19
-        self.creepy_aunts_and_uncles()       #US20
-        self.correct_gender_role()           #US21
-        self.unique_names_and_bdays()        #US23
-        self.unique_spouses_in_family()      #US24
-        self.unique_children_in_family()     #US25
-        self.list_ages()                     #US27
-        self.list_deceased()                 #US29
-        self.list_living_married()           #US30
+        self.dates_before_curr()                #US01
+        self.indi_birth_before_marriage()       #US02
+        self.birth_before_death()               #US03
+        self.marr_before_div()                  #US04
+        self.marr_div_before_death()            #US05 & US06
+        self.normal_age()                       #US07
+        self.birth_before_marriage()            #US08
+        self.brith_before_death_of_parents()    #US09
+        self.spouses_too_young()                #US10
+        self.no_bigamy()                        #US11
+        self.parents_too_old()                  #US12
+        self.sibling_spacing()                  #US13
+        self.too_many_births()                  #US14
+        self.too_many_siblings()                #US15
+        self.no_marriage_to_descendants()       #US17
+        self.no_marriage_to_siblings()          #US18
+        self.no_marriage_to_cousin()            #US19
+        self.creepy_aunts_and_uncles()          #US20
+        self.correct_gender_role()              #US21
+        self.unique_names_and_bdays()           #US23
+        self.unique_spouses_in_family()         #US24
+        self.unique_children_in_family()        #US25
+        self.list_ages()                        #US27
+        self.order_siblings_oldest_to_youngest()#US28
+        self.list_deceased()                    #US29
+        self.list_living_married()              #US30
 
         if print_errors == True:
             self.print_errors()
@@ -546,6 +547,16 @@ class CheckForErrors:
             elif individual.name == "Jess /Eff/": #known birthday and not known death date
                 if individual.age == 51:
                     self.all_errors += ["US27: {} calculated age is {} == 51 years old".format(individual.name, individual.age)]
+
+    def order_siblings_oldest_to_youngest(self):
+        """US28: This method will order the siblings in each family from oldest to youngest"""
+        for ID, family in self.family.items():
+            listed_siblings_ID = list(family.chil) #list of sibling ID
+            listed_siblings_obj = [self.individuals[indi] for indi in listed_siblings_ID] #list of sibling Individual() object
+            sorted_siblings = sorted(listed_siblings_obj, key=lambda x: x.birt, reverse=False) #list of sibling Individual() object sorted on age
+            sorted_names = [sibling.name for sibling in sorted_siblings] #list of siblings names in order of age
+            if len(sorted_names) > 1: #only lists if there is more than one sibling
+                self.all_errors += ["US28: The children in family {} from oldest to youngest are {}".format(ID, sorted_names)]
 
     def list_deceased(self):
         """US29: This method lists all of the deceased people in the GEDCOM file"""

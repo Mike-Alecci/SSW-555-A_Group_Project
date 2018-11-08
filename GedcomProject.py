@@ -182,6 +182,7 @@ class CheckForErrors:
         self.order_siblings_oldest_to_youngest()#US28
         self.list_deceased()                    #US29
         self.list_living_married()              #US30
+        self.list_anniversaries90               #US39
 
         if print_errors == True:
             self.print_errors()
@@ -570,6 +571,17 @@ class CheckForErrors:
             if family.div != None:
                 self.add_errors_if_new("US30: {} is alive and married".format(self.individuals[family.husb].name))
                 self.add_errors_if_new("US30: {} is alive and married".format(self.individuals[family.wife].name))
+                
+    def list_anniversaries(self):
+        """US39: This method lists all upcoming anniversaries in the next 30 days"""
+        for fam in self.family.values():
+            anniversary1 = fam.marr.replace(year = datetime.date.today().year)
+            anniversary2 = fam.marr.replace(year = datetime.date.today().year + 1)
+            ann1Time = (anniversary1 - datetime.date.today()).days
+            ann2Time = (anniversary2 - datetime.date.today()).days
+            
+            if((ann1Time < 30 and ann1Time > 0) or (ann2Time < 30 and ann2Time > 0)):
+                self.all_errors += ["US39: {} and {} have an anniversary coming in {} days".format(self.individuals[fam.husb].name,self.individuals[fam.wife].name, str(min(ann1Time,ann2Time)))]
 
     def add_errors_if_new(self, error):
         """This method is here to add errors to the error list if they do not occur, in order to ensure no duplicates.

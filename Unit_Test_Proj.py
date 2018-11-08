@@ -246,6 +246,12 @@ class ProjectTest(unittest.TestCase):
         "US30: Sammy /Johnson/ is alive and married", "US30: Troy /Johnson/ is alive and married"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
+            
+    def test_list_anniversaries(self):
+        """US39: Tests to ensure that all anniversaries to occur in the next 30 days are listed"""
+        list_of_known_errors = ["US39: Art /Versity/ and Ann /Versity/ have an anniversary coming in 29 days"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
 
 if __name__ == '__main__':
     unittest.main(exit=False, verbosity=2)

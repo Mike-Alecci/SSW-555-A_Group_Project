@@ -638,6 +638,20 @@
 1 BIRT
 2 DATE 12 DEC 1985
 1 FAMS @F38@
+0 @I101@ INDI
+1 NAME Jim /John/
+1 SEX M
+1 BIRT
+2 DATE 30 FEB 1990
+1 DEAT
+2 DATE 32 MAY 2015
+1 FAMS @F39@
+0 @I102@ INDI
+1 NAME Jan /Jobs/
+1 SEX F
+1 BIRT 
+2 DATE 28 FEB 1989
+1 FAMS @F39@
 0 NOTE -----------------Start of the Families-------------------
 0 @F1@ FAM
 1 HUSB @I1@
@@ -905,3 +919,11 @@
 1 WIFE @I100@
 1 MARR
 2 DATE 6 DEC 2010
+0 NOTE This family is for invalid dates
+0 @F39@ FAM
+1 HUSB @I101@
+1 WIFE @I102@
+1 MARR
+2 DATE 32 DEC 2012
+1 DIV
+2 DATE -5 JAN 2014

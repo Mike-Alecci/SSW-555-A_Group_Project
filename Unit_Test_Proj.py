@@ -257,6 +257,16 @@ class ProjectTest(unittest.TestCase):
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
+    def list_multiple_births(self):
+        """US32: Tests to ensure that all families who have had multiple births are listed"""
+        list_of_known_errors = ["US32: The /Fif/ family has had 2 children born at the same time",
+                                "US32: The /Fif/ family has had 4 children born at the same time",
+                                "US32: The /Fif/ family has had 6 children born at the same time",
+                                "US32: The /Leffe/ family has had 2 children born at the same time",
+                                "US32: The /Quick/ family has had 2 children born at the same time"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
     def test_list_anniversaries(self):
         """US39: Tests to ensure that all anniversaries to occur in the next 30 days are listed"""
         list_of_known_errors = ["US39: Art /Versity/ and Ann /Versity/ have an anniversary coming in 29 days"]

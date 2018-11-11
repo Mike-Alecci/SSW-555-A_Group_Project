@@ -183,6 +183,7 @@ class CheckForErrors:
         self.list_deceased()                    #US29
         self.list_living_married()              #US30
         self.list_living_single()               #US31
+        self.list_multiple_births()             #US32
         self.list_anniversaries()               #US39
 
         if print_errors == True:
@@ -579,6 +580,24 @@ class CheckForErrors:
         for person in self.individuals.values():
             if person.age > 30 and len(person.fams) == 0 and person.deat == None:
                 self.add_errors_if_new("US31: {} is single and alive".format(person.name))
+
+    def list_multiple_births(self):
+        """US32: This method lists all multiple births in a family"""
+        for fam in self.family.values():
+            childIDLstCopy = deepcopy(list(fam.chil))
+            childIDLstCopy.sort() #needs to be sorted since every time the program runs, the order of the children set changes
+
+            birthDayDict = {}
+            for i in range(len(childIDLstCopy)):
+                child = self.individuals[childIDLstCopy[i]]
+                if child.birt not in birthDayDict:
+                    birthDayDict[child.birt] = 1
+                else:
+                    birthDayDict[child.birt] = birthDayDict[child.birt] + 1
+            for key in birthDayDict:
+                if birthDayDict[key] > 1:
+                    familyName = str(self.individuals[fam.husb].name).split()[-1]
+                    self.add_errors_if_new("US32: The {} family has had {} children born at the same time".format(familyName, birthDayDict[key]))
 
     def list_anniversaries(self):
         """US39: This method lists all upcoming anniversaries in the next 30 days"""

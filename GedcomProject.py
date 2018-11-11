@@ -10,6 +10,7 @@ class AnalyzeGEDCOM:
         self.file_name = file_name
         self.family = dict()        #dictionary with Key = FamID Value = Family class object
         self.individuals = dict()   #dictionary with Key = IndiID Value = Individual class object
+        self.toRemove = []          #list of keys to be removed because of invalid dates
         self.errors = []
         self.fam_table = PrettyTable(field_names = ["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"])
         self.indi_table = PrettyTable(field_names = ["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"])
@@ -47,13 +48,18 @@ class AnalyzeGEDCOM:
             previous_line = line
         for indiv in self.individuals.values():
             indiv.update_age()
-
-
+        for element in self.toRemove:
+            if(element[0] == "I" and element in self.individuals):
+                self.individuals.pop(element)
+            elif(element[0] == "F" and element in self.family):
+                self.family.pop(element)
+                
     def analyze_info(self, line, previous_line, idn, fam, current_type):
         """This analyzes each line's information and stores it in the appropriate place in the appropriate class"""
         if len(line) == 2:
             return      #We only need this line when it becomes the previous line
-        else:           #Populates the variables in the Individuals class and Family class
+        else:
+            #Populates the variables in the Individuals class and Family class
             level, tag, arg = line
             level = int(level)
             if level == 1 and tag in ["NAME", "SEX", "FAMC", "FAMS", "HUSB", "WIFE", "CHIL"]:
@@ -76,7 +82,34 @@ class AnalyzeGEDCOM:
                         self.family[fam].chil.add(arg)
             elif level == 2 and tag == "DATE":              #Handles dates for both INDI and FAM cases
                 p_level, p_tag = previous_line
-                arg = datetime.datetime.strptime(arg, "%d %b %Y").date()
+                validDate = False
+                
+                try: 
+                    arg = datetime.datetime.strptime(arg, "%d %b %Y").date()
+                    validDate = True
+                except: 
+                    if p_tag == "BIRT":
+                        self.errors+=["US42: {} is an illegitimate date for {}'s birthday. The date has been adjusted to the nearest valid date.".format(arg,self.individuals[idn].name)]
+                    elif p_tag == "DEAT":
+                        self.errors+=["US42: {} is an illegitimate date for {}'s death. The date has been adjusted to the nearest valid date.".format(arg,self.individuals[idn].name)]
+                    elif p_tag == "MARR":
+                        self.errors+=["US42: {} is an illegitimate date for {}'s and {}'s marriage. The date has been adjusted to the nearest valid date.".format(arg,self.individuals[self.family[fam].husb].name,self.individuals[self.family[fam].wife].name)]
+                    elif p_tag == "DIV":
+                        self.errors+=["US42: {} is an illegitimate date for {}'s and {}'s divorce. The date has been adjusted to the nearest valid date.".format(arg,self.individuals[self.family[fam].husb].name,self.individuals[self.family[fam].wife].name)]
+                            
+                        
+                while(validDate == False):
+                    try: 
+                        arg = datetime.datetime.strptime(arg, "%d %b %Y").date()
+                        validDate = True
+                    except:                     #handles invalid dates. If a date is invalid it is added to error list 
+                                                #and the date is corrected to nearest valid date to allow program to continue running
+                        if(int(arg.split()[0]) <= 0):
+                            arg = str(int(arg.split()[0]) + 1) + " " + arg.split()[1] + " " + arg.split()[2]
+                        else:
+                            arg = str(int(arg.split()[0]) - 1) + " " + arg.split()[1] + " " + arg.split()[2]
+                        
+                    
                 if p_level == "1" and p_tag in ["BIRT", "DEAT", "MARR", "DIV"]:
                     if current_type == 1:                   #individual analysis
                         if p_tag == "BIRT":
@@ -440,7 +473,7 @@ class CheckForErrors:
                         elif(tempWife in self.family[person.famc].chil and self.individuals[tempWife] != person and [self.individuals[tempWife].name,person.name] not in couples):
                             self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[tempWife].name)]
                             couples.append([person.name,self.individuals[tempWife].name])
-
+                            
     def no_marriage_to_cousin(self):
         """US19: Tests to ensure that individuals do not marry their first cousins"""
         couples = []
@@ -546,7 +579,7 @@ class CheckForErrors:
         for individual in self.individuals.values():
             if individual.name == 'John /Old/':
                 if individual.age == 1000:
-                    self.all_errors += ["US27: {} calculated age is {} == 1000 years old".format(individual.name, individual.age)]
+                    self.all_errors += ["US27: {} calculated age is {} == 1000 years old".format(individual.name, individual.age)] 
             elif individual.name == "Jess /Eff/": #known birthday and not known death date
                 if individual.age == 51:
                     self.all_errors += ["US27: {} calculated age is {} == 51 years old".format(individual.name, individual.age)]
@@ -573,8 +606,7 @@ class CheckForErrors:
             if family.div != None:
                 self.add_errors_if_new("US30: {} is alive and married".format(self.individuals[family.husb].name))
                 self.add_errors_if_new("US30: {} is alive and married".format(self.individuals[family.wife].name))
-
-
+                
     def list_living_single(self):
         """US31: This method lists all living people over 30 who have never been married in the GEDCOM file"""
         for person in self.individuals.values():
@@ -598,7 +630,7 @@ class CheckForErrors:
                 if birthDayDict[key] > 1:
                     familyName = str(self.individuals[fam.husb].name).split()[-1]
                     self.add_errors_if_new("US32: The {} family has had {} children born at the same time".format(familyName, birthDayDict[key]))
-
+                
     def list_anniversaries(self):
         """US39: This method lists all upcoming anniversaries in the next 30 days"""
         for fam in self.family.values():
@@ -606,10 +638,30 @@ class CheckForErrors:
             anniversary2 = fam.marr.replace(year = datetime.date.today().year + 1)
             ann1Time = (anniversary1 - datetime.date.today()).days
             ann2Time = (anniversary2 - datetime.date.today()).days
-
+            
             if((ann1Time < 30 and ann1Time > 0) or (ann2Time < 30 and ann2Time > 0)):
-                self.all_errors += ["US39: {} and {} have an anniversary coming in {} days".format(self.individuals[fam.husb].name,self.individuals[fam.wife].name, str(min(ann1Time,ann2Time)))]
-
+                self.all_errors += ["US39: {} and {} have an anniversary coming within the next 30 days.".format(self.individuals[fam.husb].name,self.individuals[fam.wife].name, str(min(ann1Time,ann2Time)))]
+                
+    def check_date(self,date):
+        """helper for illegitimate dates"""
+        days ={"JAN":31, "FEB": 28, "MAR": 31, "APR": 30, "MAY": 31, "JUN": 30, "JUL": 31, "AUG": 31, "SEP":30, "OCT": 31, "NOV": 30, "DEC": 31}
+        days_in_month = (0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+        
+        if(date.day > days_in_month[date.month]):
+            print("yeet")
+                
+    def illegitimate_dates(self):
+        """US42: This method rejects illegitimate dates for the months specified"""
+        for indi in self.individuals.values():
+            self.check_date(indi.birt)
+            if(indi.deat != None):
+                self.check_date(indi.deat)
+                
+        for fam in self.family.values():
+            self.check_date(fam.marr)
+            if(indi.div != None):
+                self.check_date(fam.div)
+        
     def add_errors_if_new(self, error):
         """This method is here to add errors to the error list if they do not occur, in order to ensure no duplicates.
             Some user stories may flag duplicate errors and this method eliminates the issue."""

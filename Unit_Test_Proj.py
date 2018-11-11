@@ -269,7 +269,16 @@ class ProjectTest(unittest.TestCase):
 
     def test_list_anniversaries(self):
         """US39: Tests to ensure that all anniversaries to occur in the next 30 days are listed"""
-        list_of_known_errors = ["US39: Art /Versity/ and Ann /Versity/ have an anniversary coming in 29 days"]
+        list_of_known_errors = ["US39: Art /Versity/ and Ann /Versity/ have an anniversary coming within the next 30 days."]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+            
+    def test_invalid_dates(self):
+        """US42: Tests to ensure that all invalid dates are detected and rejected"""
+        list_of_known_errors = ["US42: -5 JAN 2014 is an illegitimate date for Jim /John/'s and Jan /Jobs/'s divorce. The date has been adjusted to the nearest valid date.",
+                                "US42: 30 FEB 1990 is an illegitimate date for Jim /John/'s birthday. The date has been adjusted to the nearest valid date.",
+                                "US42: 32 DEC 2012 is an illegitimate date for Jim /John/'s and Jan /Jobs/'s marriage. The date has been adjusted to the nearest valid date.",
+                                "US42: 32 MAY 2015 is an illegitimate date for Jim /John/'s death. The date has been adjusted to the nearest valid date."]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 

@@ -182,7 +182,8 @@ class CheckForErrors:
         self.order_siblings_oldest_to_youngest()#US28
         self.list_deceased()                    #US29
         self.list_living_married()              #US30
-        self.list_anniversaries90               #US39
+        self.list_living_single()               #US31
+        self.list_anniversaries()               #US39
 
         if print_errors == True:
             self.print_errors()
@@ -438,7 +439,7 @@ class CheckForErrors:
                         elif(tempWife in self.family[person.famc].chil and self.individuals[tempWife] != person and [self.individuals[tempWife].name,person.name] not in couples):
                             self.all_errors +=["US18: {} cannot be married to their sibling {}".format(person.name, self.individuals[tempWife].name)]
                             couples.append([person.name,self.individuals[tempWife].name])
-                            
+
     def no_marriage_to_cousin(self):
         """US19: Tests to ensure that individuals do not marry their first cousins"""
         couples = []
@@ -544,7 +545,7 @@ class CheckForErrors:
         for individual in self.individuals.values():
             if individual.name == 'John /Old/':
                 if individual.age == 1000:
-                    self.all_errors += ["US27: {} calculated age is {} == 1000 years old".format(individual.name, individual.age)] 
+                    self.all_errors += ["US27: {} calculated age is {} == 1000 years old".format(individual.name, individual.age)]
             elif individual.name == "Jess /Eff/": #known birthday and not known death date
                 if individual.age == 51:
                     self.all_errors += ["US27: {} calculated age is {} == 51 years old".format(individual.name, individual.age)]
@@ -571,7 +572,14 @@ class CheckForErrors:
             if family.div != None:
                 self.add_errors_if_new("US30: {} is alive and married".format(self.individuals[family.husb].name))
                 self.add_errors_if_new("US30: {} is alive and married".format(self.individuals[family.wife].name))
-                
+
+
+    def list_living_single(self):
+        """US31: This method lists all living people over 30 who have never been married in the GEDCOM file"""
+        for person in self.individuals.values():
+            if person.age > 30 and len(person.fams) == 0 and person.deat == None:
+                self.add_errors_if_new("US31: {} is single and alive".format(person.name))
+
     def list_anniversaries(self):
         """US39: This method lists all upcoming anniversaries in the next 30 days"""
         for fam in self.family.values():
@@ -579,7 +587,7 @@ class CheckForErrors:
             anniversary2 = fam.marr.replace(year = datetime.date.today().year + 1)
             ann1Time = (anniversary1 - datetime.date.today()).days
             ann2Time = (anniversary2 - datetime.date.today()).days
-            
+
             if((ann1Time < 30 and ann1Time > 0) or (ann2Time < 30 and ann2Time > 0)):
                 self.all_errors += ["US39: {} and {} have an anniversary coming in {} days".format(self.individuals[fam.husb].name,self.individuals[fam.wife].name, str(min(ann1Time,ann2Time)))]
 

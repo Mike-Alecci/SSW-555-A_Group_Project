@@ -141,7 +141,7 @@ class ProjectTest(unittest.TestCase):
         list_of_known_errors = ["US18: Gorl /Sib/ cannot be married to their sibling Boyle /Sib/"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
-            
+
     def test_no_marriage_to_cousin(self):
         """US19: Tests to ensure that no_marriage_to_cousin finds all individuals married to their cousin"""
         list_of_known_errors =["US19: Curr /Two/ cannot be married to their cousin Cuz /One/",
@@ -210,11 +210,11 @@ class ProjectTest(unittest.TestCase):
             self.assertIn(error, self.all_errors)
         #Tests Exception (without birthday) - Raises AttributeError
         test_ind_dict = {1 : Individual(), 2: Individual()} #creates dictionary of individuals
-        test_ind_dict[1].name, test_ind_dict[1].deat = "NoBirth /DateGuy/", datetime.datetime.strptime("9 MAR 1001", "%d %b %Y").date() 
-        test_ind_dict[2].name = "NoBirth /OrDeath/"        
-        with self.assertRaises(AttributeError): 
+        test_ind_dict[1].name, test_ind_dict[1].deat = "NoBirth /DateGuy/", datetime.datetime.strptime("9 MAR 1001", "%d %b %Y").date()
+        test_ind_dict[2].name = "NoBirth /OrDeath/"
+        with self.assertRaises(AttributeError):
             test_ind_dict[1].update_age()
-        with self.assertRaises(AttributeError): 
+        with self.assertRaises(AttributeError):
             test_ind_dict[2].update_age()
 
     def test_order_siblings_oldest_to_youngest(self):
@@ -226,27 +226,37 @@ class ProjectTest(unittest.TestCase):
         ]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
-            
+
     def test_list_deceased(self):
         """US29: Tests to ensure that all deceased individuals are listed"""
         list_of_known_errors = ["US29: Future /Trunks/ is deceased","US29: James /Nicholas/ is deceased",
-        "US29: Jessica /Joseline/ is deceased", "US29: John /Old/ is deceased", 
-        "US29: Johnny /James/ is deceased", "US29: Mark /Eff/ is deceased", 
+        "US29: Jessica /Joseline/ is deceased", "US29: John /Old/ is deceased",
+        "US29: Johnny /James/ is deceased", "US29: Mark /Eff/ is deceased",
         "US29: Peter /Tosh/ is deceased", "US29: Stevie /Wonder/ is deceased", "US29: Troy /Johnson/ is deceased"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
 
     def test_list_living_married(self):
         """US30: Tests to ensure that all individuals who are alive and still married are listed"""
-        list_of_known_errors = ["US30: Emily /Deere/ is alive and married", "US30: Future /Trunks/ is alive and married", 
-        "US30: Jane /Leffe/ is alive and married", "US30: Jen /Smith/ is alive and married", 
-        "US30: Joe /Shmoe/ is alive and married", "US30: John /Leffe/ is alive and married", 
-        "US30: Johnson /Deere/ is alive and married", "US30: Mai /Trunks/ is alive and married", 
-        "US30: Mary /Shmoe/ is alive and married", "US30: Matt /Smith/ is alive and married", 
+        list_of_known_errors = ["US30: Emily /Deere/ is alive and married", "US30: Future /Trunks/ is alive and married",
+        "US30: Jane /Leffe/ is alive and married", "US30: Jen /Smith/ is alive and married",
+        "US30: Joe /Shmoe/ is alive and married", "US30: John /Leffe/ is alive and married",
+        "US30: Johnson /Deere/ is alive and married", "US30: Mai /Trunks/ is alive and married",
+        "US30: Mary /Shmoe/ is alive and married", "US30: Matt /Smith/ is alive and married",
         "US30: Sammy /Johnson/ is alive and married", "US30: Troy /Johnson/ is alive and married"]
         for error in list_of_known_errors:
             self.assertIn(error, self.all_errors)
-            
+
+    def test_list_living_single(self):
+        """US31: Tests to ensure that all individuals who are alive, single, and over 30 are listed"""
+        list_of_known_errors = ["US31: Allen /Leffe/ is single and alive",
+                                "US31: Ava /Leffe/ is single and alive",
+                                "US31: Far /Par/ is single and alive",
+                                "US31: Lauren /Leffe/ is single and alive",
+                                "US31: Martha /Par/ is single and alive"]
+        for error in list_of_known_errors:
+            self.assertIn(error, self.all_errors)
+
     def test_list_anniversaries(self):
         """US39: Tests to ensure that all anniversaries to occur in the next 30 days are listed"""
         list_of_known_errors = ["US39: Art /Versity/ and Ann /Versity/ have an anniversary coming in 29 days"]
